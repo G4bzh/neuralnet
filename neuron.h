@@ -21,7 +21,7 @@ typedef struct
 Neuron* neuron_create(unsigned int, double (*activation)(double));
 int neuron_delete(Neuron*);
 int neuron_init(Neuron*);
-double neuron_output(Neuron*);
+int neuron_print(Neuron*);
 
 
 #endif

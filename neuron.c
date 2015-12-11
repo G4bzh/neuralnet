@@ -6,6 +6,7 @@
 
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include "neuron.h"
 
@@ -101,3 +102,32 @@ int neuron_init(Neuron* N)
 
 }
 
+
+/*
+
+  Print
+
+*/
+
+int neuron_print(Neuron* N)
+{
+  if (N == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  if (N->n_in)
+    {
+      unsigned int i;
+      for(i=0;i<N->n_in;i++)
+	{
+	  printf("w_%u : %f\n",i,N->weights[i]);
+	}
+    }
+  else
+    {
+      printf("Input\n");
+    }
+
+  return EXIT_SUCCESS;
+}
