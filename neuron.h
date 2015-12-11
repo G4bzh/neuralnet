@@ -20,7 +20,7 @@ typedef struct
 
 Neuron* neuron_create(unsigned int, double (*activation)(double));
 int neuron_delete(Neuron*);
-Neuron* neuron_init(Neuron*);
+int neuron_init(Neuron*);
 double neuron_output(Neuron*);
 
 

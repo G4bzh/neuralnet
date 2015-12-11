@@ -6,8 +6,8 @@
 
 
 #include <stdlib.h>
+#include <time.h>
 #include "neuron.h"
-
 
 
 
@@ -73,3 +73,31 @@ int neuron_delete(Neuron* N)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Initialisation
+
+*/
+
+int neuron_init(Neuron* N)
+{
+  unsigned int i;
+  
+  if (N == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  srand(time(NULL));
+
+  for(i=0;i<N->n_in;i++)
+    {
+      N->weights[i] = ((double)rand()/(double)RAND_MAX);
+    }
+
+  return EXIT_SUCCESS;
+
+}
+
