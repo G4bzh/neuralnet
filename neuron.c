@@ -23,7 +23,8 @@
 Neuron* neuron_create(unsigned int n, double (*activation)(double))
 {
   Neuron* N;
-  
+  unsigned int i;
+
   if (activation == NULL)
     {
       return NULL;
@@ -43,6 +44,12 @@ Neuron* neuron_create(unsigned int n, double (*activation)(double))
 	  free(N);
 	  return NULL;
 	}
+
+      for(i=0;i<n;i++)
+	{
+	  N->weights[i] = 0;
+	}
+
       N-> n_in = n;
     }
   
