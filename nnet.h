@@ -8,13 +8,7 @@
 #ifndef NNET_H
 #define NNET_H
 
-#include "neuron.h"
-
-typedef struct
-{
-  Neuron** neurons;
-  unsigned int n;
-} Layer;
+#include "layer.h"
 
 typedef struct
 {
@@ -25,7 +19,5 @@ typedef struct
 
 NNet* nnet_create(unsigned int);
 int nnet_delete(NNet*);
-int nnet_setNeuron(NNet*,Neuron*,unsigned int, unsigned int);
-int nnet_print(NNet*);
 
 #endif
