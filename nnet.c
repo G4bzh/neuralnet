@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "layer.h"
 #include "nnet.h"
 
@@ -23,11 +24,8 @@ NNet* nnet_create(unsigned int n)
   NNet* nnet;
   unsigned int i;
 
-  if (n < 2)
-    {
-      return NULL;
-    }
-
+  assert(n > 1);
+  
   nnet = (NNet*)malloc(sizeof(NNet));
   if (nnet == NULL)
     {
@@ -54,7 +52,7 @@ NNet* nnet_create(unsigned int n)
   
   for(i=0;i<n;i++)
     {
-      nnet->biases[i] = 0;
+      nnet->biases[i] = 1;
     }
 
   return nnet;
@@ -107,11 +105,8 @@ int nnet_print(NNet* NN)
 {
   unsigned int i,j,k;
 
-  if (NN == NULL)
-    {
-      return EXIT_FAILURE;
-    }
-
+  assert (NN != NULL);
+  
   printf("digraph G {\n");
   printf("rankdir=LR\n");
   printf("splines=line\n");
@@ -137,4 +132,57 @@ int nnet_print(NNet* NN)
   printf("}\n");
 
   return EXIT_SUCCESS;
+}
+
+/*
+
+  Encapsulation
+
+*/
+
+unsigned int nnet_get_n(NNet* NN)
+{
+  assert(NN != NULL);
+  
+  return NN->n_layers;
+}
+
+Layer* nnet_get_layer(NNet* NN, unsigned int i)
+{
+  assert(NN != NULL);
+  assert(i < NN->n_layers);
+
+  return NN->layers[i];
+
+}
+
+int nnet_set_layer(NNet* NN, unsigned int i, Layer* l)
+{
+  assert(NN != NULL);
+  assert(i < NN->n_layers);
+  
+  NN->layers[i] = l;
+
+  return EXIT_SUCCESS;
+  
+}
+
+double nnet_get_bias(NNet* NN, unsigned int i)
+{
+  assert(NN != NULL);
+  assert(i < NN->n_layers);
+
+  return NN->biases[i];
+
+}
+
+int nnet_set_bias(NNet* NN, unsigned int i, double x)
+{
+  assert(NN != NULL);
+  assert(i < NN->n_layers);
+
+  NN->biases[i] = x;
+
+  return EXIT_SUCCESS;
+
 }
