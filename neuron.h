@@ -18,10 +18,13 @@ typedef struct
 } Neuron;
 
 
+
 Neuron* neuron_create(unsigned int, double (*activation)(double));
 int neuron_delete(Neuron*);
 int neuron_init(Neuron*);
 int neuron_print(Neuron*);
-
+double neuron_identity(double);
+double neuron_sigmoid(double);
+double neuron_tanh(double);
 
 #endif

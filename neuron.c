@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 #include "neuron.h"
 
 
@@ -137,4 +138,22 @@ int neuron_print(Neuron* N)
     }
 
   return EXIT_SUCCESS;
+}
+
+
+/* Activations */
+
+double neuron_identity(double x)
+{
+  return x;
+}
+
+double neuron_sigmoid(double x)
+{
+  return (1/(1+exp(-x)));
+}
+
+double neuron_tanh(double x)
+{
+  return tanh(x);
 }

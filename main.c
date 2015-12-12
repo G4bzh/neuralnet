@@ -11,11 +11,6 @@
 #include "nnet.h"
 
 
-double identity(double x)
-{
-  return x;
-}
-
 int main( int argc, char* argv[])
 {
 

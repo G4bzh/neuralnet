@@ -1,11 +1,11 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -lm
 EXEC = neuralnet
 
 all : $(EXEC)
 
 neuralnet: main.o neuron.o layer.o nnet.o
-	$(CC) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 main.o: main.c neuron.h layer.h nnet.h
 
