@@ -75,3 +75,39 @@ int layer_delete(Layer* l)
   return EXIT_SUCCESS;
 
 }
+
+
+/* 
+
+   Print
+
+*/
+
+int layer_print(Layer* l, unsigned  int n)
+{
+  unsigned int i;
+  
+  if (l == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  printf("subgraph cluster_%u {\n",n);
+  printf("color=white;\n");
+  printf("node [style=solid,color=blue4, shape=circle];\n");
+  
+  if (l->n)
+    {
+      for(i=0;i<l->n;i++)
+	{
+	  printf("n%u%u ",n,i);
+	}
+      printf(";\n");
+    }
+  
+  printf("label = \"layer %u\"\n",n);
+  printf("}\n");
+  
+  return EXIT_SUCCESS;
+}
+

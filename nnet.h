@@ -19,5 +19,6 @@ typedef struct
 
 NNet* nnet_create(unsigned int);
 int nnet_delete(NNet*);
+int nnet_print(NNet*);
 
 #endif

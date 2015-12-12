@@ -17,5 +17,6 @@ typedef struct
 
 Layer* layer_create(unsigned int);
 int layer_delete(Layer*);
+int layer_print(Layer*, unsigned  int);
 
 #endif

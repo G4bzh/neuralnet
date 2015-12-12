@@ -95,3 +95,46 @@ int nnet_delete(NNet* NN)
   return EXIT_SUCCESS;
 
 }
+
+
+/*
+
+  Print
+
+*/
+
+int nnet_print(NNet* NN)
+{
+  unsigned int i,j,k;
+
+  if (NN == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  printf("digraph G {\n");
+  printf("rankdir=LR\n");
+  printf("splines=line\n");
+  printf("node [fixedsize=true, label=\"\"];\n");
+
+  for(i=0;i<NN->n_layers;i++)
+    {
+      layer_print(NN->layers[i],i);
+    }
+
+
+  for(i=0;i<NN->n_layers-1;i++)
+    {
+      for(j=0;j<NN->layers[i]->n;j++)
+	{
+	  for(k=0;k<NN->layers[i+1]->n;k++)
+	    {
+	      printf("n%u%u -> n%u%u\n",i,j,i+1,k);
+	    }
+	}
+    }
+
+  printf("}\n");
+
+  return EXIT_SUCCESS;
+}
