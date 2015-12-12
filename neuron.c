@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
+#include <assert.h>
 #include "neuron.h"
 
 
@@ -26,10 +27,7 @@ Neuron* neuron_create(unsigned int n, double (*activation)(double))
   Neuron* N;
   unsigned int i;
 
-  if (activation == NULL)
-    {
-      return NULL;
-    }
+  assert( activation != NULL);
 
   N = (Neuron*)malloc(sizeof(Neuron));
   if (N == NULL)
@@ -54,6 +52,8 @@ Neuron* neuron_create(unsigned int n, double (*activation)(double))
       N-> n_in = n;
     }
   
+  N->activation = activation;
+
   return N;
 
 }
@@ -94,10 +94,7 @@ int neuron_init(Neuron* N)
 {
   unsigned int i;
   
-  if (N == NULL)
-    {
-      return EXIT_FAILURE;
-    }
+  assert( N != NULL);
 
   srand(time(NULL));
 
@@ -119,10 +116,8 @@ int neuron_init(Neuron* N)
 
 int neuron_print(Neuron* N)
 {
-  if (N == NULL)
-    {
-      return EXIT_FAILURE;
-    }
+
+  assert(N != NULL);
 
   if (N->n_in)
     {
@@ -156,4 +151,59 @@ double neuron_sigmoid(double x)
 double neuron_tanh(double x)
 {
   return tanh(x);
+}
+
+
+/*
+
+  Encapsulation
+
+*/
+
+unsigned int neuron_get_n(Neuron* N)
+{
+  assert(N != NULL);
+
+  return N->n_in;
+}
+
+
+double neuron_get_weight(Neuron* N, unsigned int i)
+{
+
+  assert(N != NULL);
+  assert(i < N->n_in);
+  
+  return N->weights[i];
+
+}
+
+int neuron_set_weight(Neuron*N , unsigned int i, double x)
+{
+  assert(N != NULL);
+  assert(i < N->n_in);
+  
+  N->weights[i] = x;
+  return EXIT_SUCCESS;
+
+}
+
+
+int neuron_set_activation(Neuron* N, double (*activation)(double))
+{
+  assert(N != NULL);
+  assert(activation != NULL);
+
+  N->activation = activation;
+
+  return EXIT_SUCCESS;
+
+}
+
+
+double neuron_get_output(Neuron* N)
+{
+  assert(N != NULL);
+  
+  return N->output;
 }

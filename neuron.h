@@ -27,4 +27,11 @@ double neuron_identity(double);
 double neuron_sigmoid(double);
 double neuron_tanh(double);
 
+unsigned int neuron_get_n(Neuron*);
+double neuron_get_weight(Neuron*, unsigned int);
+int neuron_set_weight(Neuron*,unsigned int, double);
+int neuron_set_activation(Neuron*, double (*activation)(double));
+double neuron_get_output(Neuron*);
+
+
 #endif
