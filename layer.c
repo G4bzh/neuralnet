@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "neuron.h"
 #include "layer.h"
 
@@ -21,10 +22,7 @@ Layer* layer_create(unsigned int n)
   Layer* l;
   unsigned int i;
 
-  if (!n)
-    {
-      return NULL;
-    }
+  assert(n);
 
   l = (Layer*)malloc(sizeof(Layer));
   if (l == NULL)
@@ -87,10 +85,7 @@ int layer_print(Layer* l, unsigned  int n)
 {
   unsigned int i;
   
-  if (l == NULL)
-    {
-      return EXIT_FAILURE;
-    }
+  assert(l != NULL);
 
   printf("subgraph cluster_%u {\n",n);
   printf("color=white;\n");
@@ -111,3 +106,33 @@ int layer_print(Layer* l, unsigned  int n)
   return EXIT_SUCCESS;
 }
 
+/*
+
+  Encapsulation
+
+*/
+
+unsigned int layer_get_n(Layer* l)
+{
+  assert(l != NULL);
+  return l->n;
+}
+
+Neuron* layer_get_neuron(Layer* l, unsigned int i)
+{
+  assert(l != NULL);
+  assert(i < l->n);
+  
+  return l->neurons[i];
+}
+
+int layer_set_neuron(Layer* l, unsigned int i, Neuron* N)
+{
+  assert(l != NULL);
+  assert(i < l->n);
+
+  l->neurons[i] = N;
+
+  return EXIT_SUCCESS;
+
+}
