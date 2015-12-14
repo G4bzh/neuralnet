@@ -6,9 +6,10 @@
 
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <assert.h>
-#include "layer.h"
+#include "neuron.h"
 #include "nnet.h"
 
 
@@ -19,49 +20,98 @@
 
 */
 
-NNet* nnet_create(unsigned int n)
+NNet* nnet_create(unsigned int n, ...)
 {
-  NNet* nnet;
-  unsigned int i;
+  va_list valist;
+  NNet* NN;
+  unsigned int i,j,k,l;
 
   assert(n > 1);
   
-  nnet = (NNet*)malloc(sizeof(NNet));
-  if (nnet == NULL)
+  NN = (NNet*)malloc(sizeof(NNet));
+  if (NN == NULL)
     {
       return NULL;
     }
 
-  nnet->layers = (Layer**)malloc(n*sizeof(Layer*));
-  if (nnet->layers == NULL)
+  NN->n_neurons = (unsigned int*)malloc(n*sizeof(unsigned int));
+  if (NN->n_neurons == NULL)
     {
       goto err0;
     }
+
+  va_start(valist, n);
   
   for(i=0;i<n;i++)
     {
-      nnet->layers[i] = NULL;
+      NN->n_neurons[i] = va_arg(valist,unsigned int);
     }
-  nnet->n_layers = n;
 
-  nnet->biases = (double*)malloc(n*sizeof(double));
-  if (nnet->biases == NULL)
+  va_end(valist);
+  
+
+  NN->biases = (double*)malloc(n*sizeof(double));
+  if (NN->biases == NULL)
     {
       goto err1;
     }
-  
+
   for(i=0;i<n;i++)
     {
-      nnet->biases[i] = 1;
+      NN->biases[i] = 1;
+    }
+  
+  NN->layers = (Neuron***)malloc(n*sizeof(Neuron***));
+  if (NN->layers == NULL)
+    {
+      goto err2;
+    }			    
+
+  j=0;
+  for(i=0;i<n;i++)
+    {
+ 
+      NN->layers[i] = (Neuron**)malloc(NN->n_neurons[i]*sizeof(Neuron*));
+      if (NN->layers[i] == NULL)
+      	{
+      	  goto err3;
+      	}
+     
+      for(j=0;j<NN->n_neurons[i];j++)
+      {
+      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]),neuron_sigmoid);
+      	if (NN->layers[i][j] == NULL)
+      	  {
+      	    goto err3;
+      	  }
+      }
     }
 
-  return nnet;
+  NN->n_layers = n;
+
+  return NN;
+
+ err3:
+  for(k=0;k<i;k++)
+    {
+      for(l=0;l<j;l++)
+	{
+	  neuron_delete(NN->layers[k][l]);
+	}
+      free(NN->layers[k]);
+    }
+
+  free(NN->layers);
+
+ err2:
+  free(NN->biases);
 
  err1:
-  free(nnet->layers);
+  free(NN->n_neurons);
 
  err0:
-  free(nnet);
+  free(NN);
+
   return NULL;
 
 }
@@ -75,7 +125,7 @@ NNet* nnet_create(unsigned int n)
 
 int nnet_delete(NNet* NN)
 {
-  unsigned int i;
+  unsigned int i,j;
 
   if (NN == NULL)
     {
@@ -84,9 +134,14 @@ int nnet_delete(NNet* NN)
 
   for(i=0;i<NN->n_layers;i++)
     {
-      layer_delete(NN->layers[i]);
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  neuron_delete(NN->layers[i][j]);
+	}
+      free(NN->layers[i]);
     }
   free(NN->layers);
+  free(NN->n_neurons);
   free(NN->biases);
   free(NN);
   
@@ -114,15 +169,31 @@ int nnet_print(NNet* NN)
 
   for(i=0;i<NN->n_layers;i++)
     {
-      layer_print(NN->layers[i],i);
+
+      printf("subgraph cluster_%u {\n",i);
+      printf("color=white;\n");
+      printf("node [style=solid,color=blue4, shape=circle];\n");
+      
+      if (NN->n_neurons[i])
+	{
+	  for(j=0;j<NN->n_neurons[i];j++)
+	    {
+	      printf("n%u%u ",i,j);
+	    }
+	  printf(";\n");
+	}
+      
+      printf("label = \"layer %u\"\n",i);
+      printf("}\n");
+      
     }
 
 
   for(i=0;i<NN->n_layers-1;i++)
     {
-      for(j=0;j<NN->layers[i]->n;j++)
+      for(j=0;j<NN->n_neurons[i];j++)
 	{
-	  for(k=0;k<NN->layers[i+1]->n;k++)
+	  for(k=0;k<NN->n_neurons[i+1];k++)
 	    {
 	      printf("n%u%u -> n%u%u\n",i,j,i+1,k);
 	    }
@@ -132,57 +203,4 @@ int nnet_print(NNet* NN)
   printf("}\n");
 
   return EXIT_SUCCESS;
-}
-
-/*
-
-  Encapsulation
-
-*/
-
-unsigned int nnet_get_n(NNet* NN)
-{
-  assert(NN != NULL);
-  
-  return NN->n_layers;
-}
-
-Layer* nnet_get_layer(NNet* NN, unsigned int i)
-{
-  assert(NN != NULL);
-  assert(i < NN->n_layers);
-
-  return NN->layers[i];
-
-}
-
-int nnet_set_layer(NNet* NN, unsigned int i, Layer* l)
-{
-  assert(NN != NULL);
-  assert(i < NN->n_layers);
-  
-  NN->layers[i] = l;
-
-  return EXIT_SUCCESS;
-  
-}
-
-double nnet_get_bias(NNet* NN, unsigned int i)
-{
-  assert(NN != NULL);
-  assert(i < NN->n_layers);
-
-  return NN->biases[i];
-
-}
-
-int nnet_set_bias(NNet* NN, unsigned int i, double x)
-{
-  assert(NN != NULL);
-  assert(i < NN->n_layers);
-
-  NN->biases[i] = x;
-
-  return EXIT_SUCCESS;
-
 }
