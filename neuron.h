@@ -11,10 +11,10 @@
 
 typedef struct
 {
-  unsigned int n_in;
-  double* weights;
-  double (*activation)(double);
-  double output;
+  unsigned int n_in;              /* Number of inputs */
+  double* weights;                /* Input weights */
+  double (*activation)(double);   /* Activation function */
+  double output;                  /* Neuron output */
 } Neuron;
 
 

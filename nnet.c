@@ -26,6 +26,7 @@ NNet* nnet_create(unsigned int n, ...)
   NNet* NN;
   unsigned int i,j,k,l;
 
+  /* First parameter is the number of layers */
   assert(n > 1);
   
   NN = (NNet*)malloc(sizeof(NNet));
@@ -44,6 +45,7 @@ NNet* nnet_create(unsigned int n, ...)
   
   for(i=0;i<n;i++)
     {
+      /* Variable parameters are the numbers of neurons per layer */
       NN->n_neurons[i] = va_arg(valist,unsigned int);
     }
 
@@ -61,7 +63,7 @@ NNet* nnet_create(unsigned int n, ...)
       NN->biases[i] = 1;
     }
   
-  NN->layers = (Neuron***)malloc(n*sizeof(Neuron***));
+  NN->layers = (Neuron***)malloc(n*sizeof(Neuron**));
   if (NN->layers == NULL)
     {
       goto err2;
@@ -79,7 +81,8 @@ NNet* nnet_create(unsigned int n, ...)
      
       for(j=0;j<NN->n_neurons[i];j++)
       {
-      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]),neuron_sigmoid);
+	/* Dont't forget bias input ! */
+      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]+1),neuron_sigmoid);
       	if (NN->layers[i][j] == NULL)
       	  {
       	    goto err3;
@@ -152,7 +155,7 @@ int nnet_delete(NNet* NN)
 
 /*
 
-  Print
+  Print (Graphviz/Dot format)
 
 */
 
