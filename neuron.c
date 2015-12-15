@@ -98,14 +98,17 @@ int neuron_print(Neuron* N)
   if (N->n_in)
     {
       unsigned int i;
+      printf("[");
       for(i=0;i<N->n_in;i++)
 	{
-	  printf("w_%u : %f\n",i,N->weights[i]);
+	  printf(" %f ", N->weights[i]);
 	}
+      printf("| %f ] ", N->output);
+      
     }
   else
     {
-      printf("Input\n");
+      printf("[ input | %f ] ", N->output);
     }
 
   return EXIT_SUCCESS;

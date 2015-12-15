@@ -28,7 +28,7 @@ int main( int argc, char* argv[])
     {
       for(j=0;j<NN->n_neurons[i];j++)
 	{
-	  printf(" %f ",NN->layers[i][j]->output);
+	  neuron_print(NN->layers[i][j]);
 	}
       printf("\n");
     }
@@ -41,7 +41,7 @@ int main( int argc, char* argv[])
     {
       for(j=0;j<NN->n_neurons[i];j++)
 	{
-	  printf(" %f ",NN->layers[i][j]->output);
+	  neuron_print(NN->layers[i][j]);
 	}
       printf("\n");
     }
