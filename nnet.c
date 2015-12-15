@@ -207,3 +207,42 @@ int nnet_print(NNet* NN)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Feedforward
+
+*/
+
+int nnet_feedforward(NNet* NN, double* in)
+{
+  unsigned int i,j,k;
+
+  assert(NN != NULL);
+  assert(in != NULL);
+
+  /* Set input as layer 0 neurons output */
+  for(i=0;i<NN->n_neurons[0];i++)
+    {
+      NN->layers[0][i]->output = in[i];
+    }
+
+
+  /* Feed forward */
+  for(i=1;i<NN->n_layers;i++)
+    {
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  double sum=0;
+	  for(k=0;k<NN->n_neurons[i-1];k++)
+	    {
+	      sum += NN->layers[i-1][k]->output *  NN->layers[i][j]->weights[k] ;
+	    }
+	  sum += NN->biases[i-1] * NN->layers[i][j]->weights[k];
+	  NN->layers[i][j]->output = NN->layers[i][j]->activation(sum);
+	}
+    }
+  
+  return EXIT_SUCCESS;
+}
