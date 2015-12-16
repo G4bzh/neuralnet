@@ -294,3 +294,34 @@ int nnet_backpropagation(NNet* NN, double* out)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Update (gradient descent)
+
+*/
+
+int nnet_update(NNet* NN, double l)
+{
+  unsigned int i,j,k;
+
+  assert(NN != NULL);
+  assert(l);
+
+  for(i=NN->n_layers-1;i>0;i--)
+    {
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  for(k=0;k<NN->layers[i][j]->n_in;k++)
+	    {
+	      NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_w[k] * l;
+	      NN->layers[i][j]->acc_grad_w[k] = 0; 
+	    }
+	  NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_b * l;
+	  NN->layers[i][j]->acc_grad_b = 0;
+	}
+    }
+
+  return EXIT_SUCCESS;
+}

@@ -23,5 +23,6 @@ int nnet_delete(NNet*);
 int nnet_print(NNet*);
 int nnet_feedforward(NNet*, double*);
 int nnet_backpropagation(NNet*, double*);
+int nnet_update(NNet*, double);
 
 #endif
