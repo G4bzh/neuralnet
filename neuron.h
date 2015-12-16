@@ -17,6 +17,7 @@ typedef struct
   double output;                  /* Neuron output */
   double z;                       /* Weighted input */
   double z_derivative;            /* Activation Derivative applied to z */
+  double error;                   /* Quadratic error */
 } Neuron;
 
 
