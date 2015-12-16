@@ -18,6 +18,8 @@ typedef struct
   double z;                       /* Weighted input */
   double z_derivative;            /* Activation Derivative applied to z */
   double error;                   /* Quadratic error */
+  double* acc_grad_w;             /* Weight gradient accumulator */
+  double acc_grad_b;              /* Bias gradient accumulator */
 } Neuron;
 
 

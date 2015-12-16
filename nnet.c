@@ -279,5 +279,18 @@ int nnet_backpropagation(NNet* NN, double* out)
 	}
     }
 
+  /* Gradient Accumulation */
+  for(i=NN->n_layers-1;i>0;i--)
+    {
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  for(k=0;k<NN->layers[i][j]->n_in;k++)
+	    {
+	      NN->layers[i][j]->acc_grad_w[k] += NN->layers[i][j]->error *  NN->layers[i-1][k]->output;
+	    }
+	  NN->layers[i][j]->acc_grad_b += NN->layers[i][j]->error;
+	}
+    }
+
   return EXIT_SUCCESS;
 }

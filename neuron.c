@@ -53,9 +53,18 @@ Neuron* neuron_create(unsigned int n)
 	  return NULL;
 	}
 
+      N->acc_grad_w = (double*)malloc((n)*sizeof(double));
+      if (N->acc_grad_w == NULL)
+	{
+	  free(N->weights);
+	  free(N);
+	  return NULL;
+	}
+
       for(i=0;i<n;i++)
 	{
 	  N->weights[i] = ((double)rand()/(double)RAND_MAX);
+	  N->acc_grad_w[i] = 0;
 	}
       
       /* Bias */
@@ -69,6 +78,7 @@ Neuron* neuron_create(unsigned int n)
   N->z = 0;
   N->z_derivative = 0;
   N->error = 0;
+  N->acc_grad_b = 0;
 
   return N;
 
@@ -92,6 +102,7 @@ int neuron_delete(Neuron* N)
   if (N->n_in)
     {
       free(N->weights);
+      free(N->acc_grad_w);
     }
 
   free(N);
