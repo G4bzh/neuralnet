@@ -81,8 +81,7 @@ NNet* nnet_create(unsigned int n, ...)
      
       for(j=0;j<NN->n_neurons[i];j++)
       {
-	/* Dont't forget bias input ! */
-      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]+1));
+      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]));
       	if (NN->layers[i][j] == NULL)
       	  {
       	    goto err3;
@@ -254,6 +253,9 @@ int nnet_backpropagation(NNet* NN, double* out)
 {
   int i;
   unsigned int j,k,sum;
+
+  assert(NN != NULL);
+  assert(out != NULL);
 
   /* Last layer error */
   for(j=0;j<NN->n_neurons[NN->n_layers-1];j++)

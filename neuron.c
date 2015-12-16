@@ -45,7 +45,8 @@ Neuron* neuron_create(unsigned int n)
 
   if (n)
     {
-      N->weights = (double*)malloc(n*sizeof(double));
+      /* (n+1) in malloc : biase */
+      N->weights = (double*)malloc((n+1)*sizeof(double));
       if (N->weights == NULL)
 	{
 	  free(N);
@@ -56,6 +57,9 @@ Neuron* neuron_create(unsigned int n)
 	{
 	  N->weights[i] = ((double)rand()/(double)RAND_MAX);
 	}
+      
+      /* Bias */
+      N->weights[i] = 1;
 
       N-> n_in = n;
     }
@@ -116,6 +120,8 @@ int neuron_print(Neuron* N)
 	{
 	  printf(" %f ", N->weights[i]);
 	}
+      /* Bias */
+      printf(" %f ", N->weights[i]);
       printf("| %f ] ", N->output);
       
     }
