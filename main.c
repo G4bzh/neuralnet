@@ -17,7 +17,6 @@ int main( int argc, char* argv[])
 {
   
   NNet* NN;
-  unsigned int i,j;
   double in[] = {0.5,0.5};
   double out[] = {0,1};
 
@@ -25,30 +24,11 @@ int main( int argc, char* argv[])
   
   NN = nnet_create(4,2,3,3,2);
   
-  for(i=0;i<NN->n_layers;i++)
-    {
-      for(j=0;j<NN->n_neurons[i];j++)
-	{
-	  neuron_print(NN->layers[i][j]);
-	}
-      printf("\n");
-    }
-
-      
   nnet_feedforward(NN,in);
-
-
-  for(i=0;i<NN->n_layers;i++)
-    {
-      for(j=0;j<NN->n_neurons[i];j++)
-	{
-	  neuron_print(NN->layers[i][j]);
-	}
-      printf("\n");
-    }
 
   nnet_backpropagation(NN,out);
 
+  nnet_update(NN,3);
 
   nnet_delete(NN);
 

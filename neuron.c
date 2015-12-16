@@ -45,7 +45,7 @@ Neuron* neuron_create(unsigned int n)
 
   if (n)
     {
-      /* (n+1) in malloc : biase */
+      /* (n+1) in malloc : bias */
       N->weights = (double*)malloc((n+1)*sizeof(double));
       if (N->weights == NULL)
 	{
