@@ -19,10 +19,11 @@ int main( int argc, char* argv[])
   NNet* NN;
   unsigned int i,j;
   double in[] = {0.5,0.5};
+  double out[] = {0,1};
 
   srand(time(NULL));
   
-  NN = nnet_create(4,2,3,2,1);
+  NN = nnet_create(4,2,3,3,2);
   
   for(i=0;i<NN->n_layers;i++)
     {
@@ -45,6 +46,8 @@ int main( int argc, char* argv[])
 	}
       printf("\n");
     }
+
+  nnet_backpropagation(NN,out);
 
 
   nnet_delete(NN);

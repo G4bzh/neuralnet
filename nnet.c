@@ -248,3 +248,17 @@ int nnet_feedforward(NNet* NN, double* in)
   
   return EXIT_SUCCESS;
 }
+
+
+int nnet_backpropagation(NNet* NN, double* out)
+{
+  unsigned int i;
+
+  /* Last layer error */
+  for(i=0;i<NN->n_neurons[NN->n_layers-1];i++)
+    {
+      printf("Ouput %u = %f\n",i, NN->layers[NN->n_layers-1][i]->output);
+    }
+
+  return EXIT_SUCCESS;
+}
