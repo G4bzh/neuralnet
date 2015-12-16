@@ -15,6 +15,7 @@ typedef struct
   double* weights;                /* Input weights */
   double (*activation)(double);   /* Activation function */
   double output;                  /* Neuron output */
+  double z;                       /* Weighted input */
 } Neuron;
 
 

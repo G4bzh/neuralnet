@@ -240,6 +240,7 @@ int nnet_feedforward(NNet* NN, double* in)
 	      sum += NN->layers[i-1][k]->output *  NN->layers[i][j]->weights[k] ;
 	    }
 	  sum += NN->biases[i-1] * NN->layers[i][j]->weights[k];
+	  NN->layers[i][j]->z = sum;
 	  NN->layers[i][j]->output = NN->layers[i][j]->activation(sum);
 	}
     }
