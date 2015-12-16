@@ -16,16 +16,16 @@ typedef struct
   double (*activation)(double);   /* Activation function */
   double output;                  /* Neuron output */
   double z;                       /* Weighted input */
+  double z_derivative;            /* Activation Derivative applied to z */
 } Neuron;
 
 
 
-Neuron* neuron_create(unsigned int, double (*activation)(double));
+Neuron* neuron_create(unsigned int);
 int neuron_delete(Neuron*);
 int neuron_print(Neuron*);
-double neuron_identity(double);
 double neuron_sigmoid(double);
-double neuron_tanh(double);
+
 
 
 

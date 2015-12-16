@@ -12,6 +12,17 @@
 #include "neuron.h"
 
 
+/*
+
+  Sigmoid
+
+*/
+
+double neuron_sigmoid(double x)
+{
+  return (1/(1+exp(-x)));
+}
+
 
 /* 
 
@@ -21,12 +32,10 @@
 
 
 
-Neuron* neuron_create(unsigned int n, double (*activation)(double))
+Neuron* neuron_create(unsigned int n)
 {
   Neuron* N;
   unsigned int i;
-
-  assert( activation != NULL);
 
   N = (Neuron*)malloc(sizeof(Neuron));
   if (N == NULL)
@@ -51,7 +60,7 @@ Neuron* neuron_create(unsigned int n, double (*activation)(double))
       N-> n_in = n;
     }
   
-  N->activation = activation;
+  N->activation = neuron_sigmoid;
 
   return N;
 
@@ -112,22 +121,4 @@ int neuron_print(Neuron* N)
     }
 
   return EXIT_SUCCESS;
-}
-
-
-/* Activations */
-
-double neuron_identity(double x)
-{
-  return x;
-}
-
-double neuron_sigmoid(double x)
-{
-  return (1/(1+exp(-x)));
-}
-
-double neuron_tanh(double x)
-{
-  return tanh(x);
 }

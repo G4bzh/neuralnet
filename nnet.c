@@ -82,7 +82,7 @@ NNet* nnet_create(unsigned int n, ...)
       for(j=0;j<NN->n_neurons[i];j++)
       {
 	/* Dont't forget bias input ! */
-      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]+1),neuron_sigmoid);
+      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]+1));
       	if (NN->layers[i][j] == NULL)
       	  {
       	    goto err3;
@@ -242,6 +242,7 @@ int nnet_feedforward(NNet* NN, double* in)
 	  sum += NN->biases[i-1] * NN->layers[i][j]->weights[k];
 	  NN->layers[i][j]->z = sum;
 	  NN->layers[i][j]->output = NN->layers[i][j]->activation(sum);
+	  NN->layers[i][j]->z_derivative = NN->layers[i][j]->output*(1-NN->layers[i][j]->output); /* sigmoid' = sigmoid*(1-sigmoid) */
 	}
     }
   
