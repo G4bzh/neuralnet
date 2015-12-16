@@ -252,13 +252,29 @@ int nnet_feedforward(NNet* NN, double* in)
 
 int nnet_backpropagation(NNet* NN, double* out)
 {
-  unsigned int i;
+  int i;
+  unsigned int j,k,sum;
 
   /* Last layer error */
-  for(i=0;i<NN->n_neurons[NN->n_layers-1];i++)
+  for(j=0;j<NN->n_neurons[NN->n_layers-1];j++)
     {
       /* derivative of quadratic cost : (target - output) */
-      NN->layers[NN->n_layers-1][i]->error = (out[i] - NN->layers[NN->n_layers-1][i]->output) * NN->layers[NN->n_layers-1][i]->z_derivative;
+      NN->layers[NN->n_layers-1][j]->error = (out[j] - NN->layers[NN->n_layers-1][j]->output) * NN->layers[NN->n_layers-1][j]->z_derivative;
+    }
+
+  
+  /* Error backpropagation */
+  for(i=NN->n_layers-2;i>=0;i--)
+    {
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  sum = 0;
+	  for(k=0;k<NN->n_neurons[i+1];k++)
+	    {
+	      sum += NN->layers[i+1][k]->weights[j] * NN->layers[i+1][k]->error;
+	    }
+	  NN->layers[i][j]->error = sum * NN->layers[i][j]->z_derivative;
+	}
     }
 
   return EXIT_SUCCESS;
