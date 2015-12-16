@@ -257,7 +257,8 @@ int nnet_backpropagation(NNet* NN, double* out)
   /* Last layer error */
   for(i=0;i<NN->n_neurons[NN->n_layers-1];i++)
     {
-      printf("Ouput %u = %f\n",i, NN->layers[NN->n_layers-1][i]->output);
+      /* derivative of quadratic cost : (target - output) */
+      NN->layers[NN->n_layers-1][i]->error = (out[i] - NN->layers[NN->n_layers-1][i]->output) * NN->layers[NN->n_layers-1][i]->z_derivative;
     }
 
   return EXIT_SUCCESS;
