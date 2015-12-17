@@ -26,5 +26,6 @@ int nnet_feedforward(NNet*, double*);
 int nnet_backpropagation(NNet*, double*);
 int nnet_update(NNet*, double);
 int nnet_minibatch(NNet*, Dataset*, unsigned int, double);
+unsigned int nnet_evaluate(NNet*, Dataset*);
 
 #endif
