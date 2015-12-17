@@ -17,25 +17,26 @@
 int main( int argc, char* argv[])
 {
   
-  NNet* NN;
   Dataset* DS;
-  double in[] = {0.5,0.5};
-  double out[] = {0,1};
+  unsigned int i,n;
 
   srand(time(NULL));
+  n = 4000;
 
-  DS = dataset_create(2,2,2);
-  
-  NN = nnet_create(4,2,3,3,2);
-  
-  nnet_feedforward(NN,in);
 
-  nnet_backpropagation(NN,out);
+  DS = dataset_create(n,1,1);
 
-  nnet_update(NN,3);
+  for(i=0;i<n;i++)
+    {
+      dataset_add(DS,2,(double)i,(double)(i+1));
+    }
 
-  nnet_delete(NN);
+  dataset_print(DS);
 
+  printf(" --- \n");
+
+  dataset_shuffle(DS);
+  dataset_print(DS);
   dataset_delete(DS);
 
   return EXIT_SUCCESS;
