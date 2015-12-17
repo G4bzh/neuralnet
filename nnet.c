@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "neuron.h"
+#include "dataset.h"
 #include "nnet.h"
 
 
@@ -323,5 +324,36 @@ int nnet_update(NNet* NN, double l)
 	}
     }
 
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  Mini-batch
+
+*/
+
+int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta)
+{
+  assert( NN != NULL );
+  assert( ds != NULL );
+  assert( n < ds->len );
+  assert( n );
+
+  unsigned int i,j;
+
+  i=0;
+  while( i+n < ds->len )
+    {
+      for(j=i;j<i+n;j++)
+	{
+	  assert( nnet_feedforward(NN,ds->in[j]) == EXIT_SUCCESS );
+	  assert( nnet_backpropagation(NN,ds->out[j])  == EXIT_SUCCESS );
+	}
+      assert( nnet_update(NN, eta/(double)n) == EXIT_SUCCESS );
+      i += n;
+    }
+  
   return EXIT_SUCCESS;
 }

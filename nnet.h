@@ -9,6 +9,7 @@
 #define NNET_H
 
 #include "neuron.h"
+#include "dataset.h"
 
 typedef struct
 {
@@ -24,5 +25,6 @@ int nnet_print(NNet*);
 int nnet_feedforward(NNet*, double*);
 int nnet_backpropagation(NNet*, double*);
 int nnet_update(NNet*, double);
+int nnet_minibatch(NNet*, Dataset*, unsigned int, double);
 
 #endif
