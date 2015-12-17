@@ -7,7 +7,7 @@ all : $(EXEC)
 neuralnet: main.o neuron.o nnet.o dataset.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-main.o: main.c neuron.h nnet.h
+main.o: main.c neuron.h nnet.h dataset.h
 
 dataset.o: dataset.c dataset.h
 
