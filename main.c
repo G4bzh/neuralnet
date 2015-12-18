@@ -20,42 +20,59 @@ int main( int argc, char* argv[])
   Dataset* DS;
   Dataset* DS_Test;
   NNet* NN;
-  unsigned int i,n,ntest,epoch;
+  unsigned int i,n,epoch;
 
   srand(time(NULL));
-  n = 4000;
-  ntest = 100;
-  epoch = 1000;
+  n = 4;
+  epoch = 10;
 
 
-  DS = dataset_create(n,1,1);
+  DS = dataset_create(n,2,1);
   assert( DS != NULL );
 
-  for(i=1;i<n+1;i++)
+  if (dataset_add(DS,3,1.0,1.0,1.0) != EXIT_SUCCESS)
     {
-      if (dataset_add(DS,2,(double)i/(double)(n+1),(double)(i-1)/(double)(n+1)) != EXIT_SUCCESS)
-	{
-	  goto err0;
-	}
+      goto err0;
     }
-
-
-  DS_Test = dataset_create(ntest,1,1);
-  if( DS_Test == NULL )
+  if (dataset_add(DS,3,1.0,0.0,0.0) != EXIT_SUCCESS)
+    {
+      goto err0;
+    }
+  if (dataset_add(DS,3,0.0,1.0,0.0) != EXIT_SUCCESS)
+    {
+      goto err0;
+    }
+  if (dataset_add(DS,3,0.0,0.0,0.0) != EXIT_SUCCESS)
     {
       goto err0;
     }
 
-  for(i=0;i<ntest;i++)
+ 
+  DS_Test = dataset_create(n,2,1);
+  if( DS_Test == NULL )
     {
-      if (dataset_add(DS_Test,2,(double)(i+n+1)/(double)(ntest+n),(double)(i+n-1)/(double)(ntest+n+1)) != EXIT_SUCCESS)
-	{
-	  goto err1;
-	}
+      goto err0;
+    }
+  if (dataset_add(DS_Test,3,1.0,1.0,1.0) != EXIT_SUCCESS)
+    {
+      goto err1;
+    }
+  if (dataset_add(DS_Test,3,1.0,0.0,0.0) != EXIT_SUCCESS)
+    {
+      goto err1;
+    }
+  if (dataset_add(DS_Test,3,0.0,1.0,0.0) != EXIT_SUCCESS)
+    {
+      goto err1;
+    }
+  if (dataset_add(DS_Test,3,0.0,0.0,0.0) != EXIT_SUCCESS)
+    {
+      goto err1;
     }
 
 
-  NN = nnet_create(3,1,2,1);
+
+  NN = nnet_create(3,2,2,1);
   if (NN == NULL)
     {
       goto err1;
@@ -68,7 +85,7 @@ int main( int argc, char* argv[])
 	{
 	  goto err2;
 	}
-      nnet_minibatch(NN,DS,10,3.0);
+      nnet_minibatch(NN,DS,2,3.0);
       printf("Epoch %u/%u : %u/%u\n",i,epoch, nnet_evaluate(NN,DS_Test),DS_Test->len);
     }
 
