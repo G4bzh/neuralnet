@@ -275,7 +275,7 @@ int nnet_backpropagation(NNet* NN, double* out)
 	  sum = 0;
 	  for(k=0;k<NN->n_neurons[i+1];k++)
 	    {
-	      sum += NN->layers[i+1][k]->weights[j] * NN->layers[i+1][k]->error;
+	      sum += NN->layers[i+1][k]->weights[k] * NN->layers[i+1][k]->error;
 	    }
 	  NN->layers[i][j]->error = sum * NN->layers[i][j]->z_derivative;
 	}
@@ -379,7 +379,7 @@ unsigned int nnet_evaluate(NNet* NN, Dataset* ds)
 
       for(j=0;j<ds->out_len;j++)
 	{
-	  printf(" %f (%f) ",NN->layers[NN->n_layers - 1][j]->output,ds->out[i][j]);
+	  printf(" %f (expected: %f) ",NN->layers[NN->n_layers - 1][j]->output,ds->out[i][j]);
 	}
     }
 
