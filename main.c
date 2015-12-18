@@ -24,7 +24,7 @@ int main( int argc, char* argv[])
 
   srand(time(NULL));
   n = 4;
-  epoch = 10;
+  epoch = 10000; /* Must be great */
 
 
   DS = dataset_create(n,2,1);
