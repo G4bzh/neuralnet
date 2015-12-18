@@ -42,7 +42,7 @@ int main( int argc, char* argv[])
     {
       goto err0;
     }
-  if (dataset_add(DS,3,0.0,0.0,0.0) != EXIT_SUCCESS)
+  if (dataset_add(DS,3,0.0,0.0,1.0) != EXIT_SUCCESS)
     {
       goto err0;
     }
@@ -65,7 +65,7 @@ int main( int argc, char* argv[])
     {
       goto err1;
     }
-  if (dataset_add(DS_Test,3,0.0,0.0,0.0) != EXIT_SUCCESS)
+  if (dataset_add(DS_Test,3,0.0,0.0,1.0) != EXIT_SUCCESS)
     {
       goto err1;
     }
