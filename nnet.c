@@ -253,8 +253,7 @@ int nnet_feedforward(NNet* NN, double* in)
 
 int nnet_backpropagation(NNet* NN, double* out)
 {
-  int i;
-  unsigned int j,k;
+  unsigned int i,j,k;
   double sum;
 
   assert(NN != NULL);
@@ -264,7 +263,7 @@ int nnet_backpropagation(NNet* NN, double* out)
   for(j=0;j<NN->n_neurons[NN->n_layers-1];j++)
     {
       /* derivative of quadratic cost : (target - output) */
-      NN->layers[NN->n_layers-1][j]->error = (out[j] - NN->layers[NN->n_layers-1][j]->output) * NN->layers[NN->n_layers-1][j]->z_derivative;
+      NN->layers[NN->n_layers-1][j]->error = (NN->layers[NN->n_layers-1][j]->output - out[j]) * NN->layers[NN->n_layers-1][j]->z_derivative;
     }
 
   
@@ -368,7 +367,7 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta)
 
 unsigned int nnet_evaluate(NNet* NN, Dataset* ds)
 {
-  unsigned int i,j,b;
+  unsigned int i,j;
   unsigned int n=0;
 
   assert( NN != NULL );
@@ -378,15 +377,10 @@ unsigned int nnet_evaluate(NNet* NN, Dataset* ds)
     {
       assert( nnet_feedforward(NN,ds->in[i]) == EXIT_SUCCESS );
 
-      for(j=0, b=0;j<ds->out_len;j++)
+      for(j=0;j<ds->out_len;j++)
 	{
-	  if ( NN->layers[NN->n_layers - 1][j]->output == ds->out[i][j] )
-	    {
-	      b++;
-	    }
 	  printf(" %f (%f) ",NN->layers[NN->n_layers - 1][j]->output,ds->out[i][j]);
 	}
-      n += (b == ds->out_len)?1:0;
     }
 
   return n;

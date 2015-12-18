@@ -85,8 +85,8 @@ int main( int argc, char* argv[])
 	{
 	  goto err2;
 	}
-      nnet_minibatch(NN,DS,2,3.0);
-      printf("Epoch %u/%u : %u/%u\n",i,epoch, nnet_evaluate(NN,DS_Test),DS_Test->len);
+      nnet_minibatch(NN,DS,2,0.5);
+      printf("Epoch %u/%u : %u/%u\n",i+1,epoch, nnet_evaluate(NN,DS_Test),DS_Test->len);
     }
 
   nnet_delete(NN);
