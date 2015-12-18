@@ -85,7 +85,7 @@ int main( int argc, char* argv[])
 	{
 	  goto err2;
 	}
-      nnet_minibatch(NN,DS,2,3.0);
+      nnet_minibatch(NN,DS,2,1.0);
      
     }
 
