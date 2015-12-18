@@ -275,7 +275,7 @@ int nnet_backpropagation(NNet* NN, double* out)
 	  sum = 0;
 	  for(k=0;k<NN->n_neurons[i+1];k++)
 	    {
-	      sum += NN->layers[i+1][k]->weights[k] * NN->layers[i+1][k]->error;
+	      sum += NN->layers[i+1][k]->weights[j] * NN->layers[i+1][k]->error;
 	    }
 	  NN->layers[i][j]->error = sum * NN->layers[i][j]->z_derivative;
 	}
