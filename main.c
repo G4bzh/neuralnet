@@ -12,6 +12,7 @@
 #include <assert.h>
 #include "dataset.h"
 #include "nnet.h"
+#include "mnist.h"
 
 
 int main( int argc, char* argv[])
@@ -95,6 +96,9 @@ int main( int argc, char* argv[])
   dataset_delete(DS_Test);
   dataset_delete(DS);
 
+
+  // mnist_images("../mnist/train-images-idx3-ubyte");
+  mnist_labels("../mnist/train-labels-idx1-ubyte");
 
   return EXIT_SUCCESS;
 
