@@ -358,31 +358,3 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta)
   
   return EXIT_SUCCESS;
 }
-
-/*
-
-  Evaluate
-
-*/
-
-unsigned int nnet_evaluate(NNet* NN, Dataset* ds)
-{
-  unsigned int i,j;
-  unsigned int n=0;
-
-  assert( NN != NULL );
-  assert( ds != NULL );
-
-  for(i=0;i<ds->len;i++)
-    {
-      assert( nnet_feedforward(NN,ds->in[i]) == EXIT_SUCCESS );
-
-      for(j=0;j<ds->out_len;j++)
-	{
-	  printf(" %f (target: %f)\n",NN->layers[NN->n_layers - 1][j]->output,ds->out[i][j]);
-	}
-    }
-
-  return n;
-  
-}

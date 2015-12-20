@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include "dataset.h"
+#include "nnet.h"
 #include "mnist.h"
 
 
@@ -160,4 +161,40 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
  
   return NULL;
 
+}
+
+/*
+
+  Evaluate Helpers
+
+*/
+
+int mnist_max_dataset(unsigned int n, Dataset* ds)
+{
+  int max = 0;
+  return max;
+}
+
+int mnist_max_nnet(NNet* NN)
+{
+  int max = 0;
+  return max;  
+}
+
+
+/*
+
+  Evaluate
+
+*/
+
+int mnist_evaluate(NNet* NN, Dataset * ds)
+{
+  int n=0;
+
+  assert(NN != NULL);
+  assert(ds != NULL);
+  assert(NN->n_neurons[NN->n_layers-1] == ds->out_len);
+
+  return n;
 }
