@@ -9,7 +9,7 @@ neuralnet: main.o neuron.o nnet.o dataset.o mnist.o
 
 main.o: main.c neuron.h nnet.h dataset.h mnist.h
 
-mnist.o : mnist.c mnist.h
+mnist.o : mnist.c mnist.h dataset.h
 
 dataset.o: dataset.c dataset.h
 

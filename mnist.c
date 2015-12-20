@@ -13,150 +13,151 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include "dataset.h"
 #include "mnist.h"
+
+
+#define MNIST_IMAGES_MAGIC    0x803
+#define MNIST_LABELS_MAGIC    0x801
+#define MNIST_VALUES          10
+
 
 
 /*
 
-  Read images file
+  Load mnist database
 
 */
 
-int mnist_images(char* filename)
+
+Dataset* mnist_load(char* filename_i, char* filename_l)
 {
-  int fd;
-  int n,rows,cols,i,j,k;
+  int fd_i,fd_l;
+  int n_i,n_l,rows,cols,i,j,k,l;
   unsigned char c;
+  double* a;
+  Dataset* ds;
 
-  assert(filename != NULL);
-  fd = open(filename,O_RDONLY);
-  assert(fd != -1);
+  assert(filename_i != NULL);
+  assert(filename_l != NULL);
+  fd_i = open(filename_i,O_RDONLY);
+  assert(fd_i != -1);
+  fd_l = open(filename_l,O_RDONLY);
+  assert(fd_l != -1);
 
-  if (read(fd,&n,sizeof(int)) != sizeof(int))
+
+
+
+  if (read(fd_i,&n_i,sizeof(int)) != sizeof(int))
     {
       goto err0;
     } 
-  if ( ntohl(n) != MNIST_IMAGES_MAGIC )
+  if ( ntohl(n_i) != MNIST_IMAGES_MAGIC )
     {
       goto err0;
     } 
 
-  if (read(fd,&n,sizeof(int)) != sizeof(int))
+  if (read(fd_l,&n_l,sizeof(int)) != sizeof(int))
     {
       goto err0;
     } 
+  if ( ntohl(n_l) != MNIST_LABELS_MAGIC )
+    {
+      goto err0;
+    }
 
-  n = ntohl(n);
-  printf("Number of images : %d\n",n);
 
-  if (read(fd,&rows,sizeof(int)) != sizeof(int))
+  if (read(fd_i,&n_i,sizeof(int)) != sizeof(int))
     {
       goto err0;
     } 
-  if (read(fd,&cols,sizeof(int)) != sizeof(int))
+  n_i = ntohl(n_i);
+  
+  if (read(fd_l,&n_l,sizeof(int)) != sizeof(int))
+    {
+      goto err0;
+    } 
+  n_l = ntohl(n_l);
+
+  if( n_i != n_l)
+    {
+      goto err0;
+    }
+
+
+
+  if (read(fd_i,&rows,sizeof(int)) != sizeof(int))
+    {
+      goto err0;
+    } 
+  if (read(fd_i,&cols,sizeof(int)) != sizeof(int))
     {
       goto err0;
     } 
   rows = ntohl(rows);
   cols = ntohl(cols);
 
-  printf("Image size : %dx%d\n",rows,cols);
-
-  for(k=0;k<n;k++)
+  a = (double*)malloc((rows*cols+MNIST_VALUES)*sizeof(double));
+  if (a == NULL)
     {
-      printf("Image %d :\n",k);
+      goto err0;
+    }
+
+  ds = dataset_create(n_i,rows*cols,MNIST_VALUES);
+  if (ds == NULL)
+    {
+      goto err1;
+    }
+
+  for(k=0;k<n_i;k++)
+    {
       for(i=0;i<rows;i++)
 	{
 	  for(j=0;j<cols;j++)
 	    {
-	      if (read(fd,&c,sizeof(unsigned char)) != sizeof(unsigned char))
+	      if (read(fd_i,&c,sizeof(unsigned char)) != sizeof(unsigned char))
 		{
-		  goto err0;
-		} 
-	      if (c==0)
-		{
-		  printf(" ");
+		  goto err2;
 		}
-	      else if (c==255)
-		{
-		  printf(".");
-		}
-	      else
-		{
-		  printf("*");
-		}
+	      
+	      a[rows*i+j] = (double)c/(double)255;
 	    }
-	  printf("\n");
 	}
+
+      if (read(fd_l,&c,sizeof(unsigned char)) != sizeof(unsigned char))
+	{
+	  goto err2;
+	}
+
+      for(l=0;l<MNIST_VALUES;l++)
+	{
+	  a[(rows*cols)+l] = (j==c?1:0);
+	}
+
+      if ( dataset_add(ds,a) == EXIT_FAILURE )
+	{
+	  goto err2;
+	}
+
     }
-
-  close(fd);
-
-  return EXIT_SUCCESS;
-
- err0:
-
-  close(fd);
-
-  return EXIT_FAILURE;
-
-}
-
-
-/*
-
-  Read labels file
-
-*/
-
-int mnist_labels(char* filename)
-{
-  int fd;
-  int n,i;
-  unsigned char c;
-
-  assert(filename != NULL);
-  fd = open(filename,O_RDONLY);
-  assert(fd != -1);
-
-  if (read(fd,&n,sizeof(int)) != sizeof(int))
-    {
-      goto err0;
-    } 
-  if ( ntohl(n) != MNIST_LABELS_MAGIC )
-    {
-      goto err0;
-    } 
-
-  if (read(fd,&n,sizeof(int)) != sizeof(int))
-    {
-      goto err0;
-    } 
-
-  n = ntohl(n);
-  printf("Number of labels : %d\n",n);
-
 
   
+  free(a);
+  close(fd_l);
+  close(fd_i);
 
-  for(i=0;i<n;i++)
-    {
-      if (read(fd,&c,sizeof(unsigned char)) != sizeof(unsigned char))
-	{
-	  goto err0;
-	} 
-      printf("%u\n",c);
-	
-    }
+  return ds;
 
-  close(fd);
+ err2:
+  dataset_delete(ds);
 
-  return EXIT_SUCCESS;
+ err1:
+  free(a);
 
  err0:
-
-  close(fd);
-
-  return EXIT_FAILURE;
+  close(fd_l);
+  close(fd_i);
+ 
+  return NULL;
 
 }

@@ -81,8 +81,21 @@ int main( int argc, char* argv[])
   dataset_delete(DS);
 
 
-  //mnist_images("../mnist/train-images-idx3-ubyte");
-  //mnist_labels("../mnist/train-labels-idx1-ubyte");
+  printf("Loading train images...");
+  fflush(stdout);
+  DS = mnist_load("../mnist/train-images-idx3-ubyte","../mnist/train-labels-idx1-ubyte");
+  assert(DS != NULL);
+  printf("Done !\n");
+  dataset_delete(DS);
+
+  printf("Loading test images...");
+  fflush(stdout);
+  DS_Test = mnist_load("../mnist/t10k-images-idx3-ubyte","../mnist/t10k-labels-idx1-ubyte");
+  assert(DS_Test != NULL);
+  printf("Done !\n");
+  dataset_delete(DS_Test);
+
+  
 
   return EXIT_SUCCESS;
 
