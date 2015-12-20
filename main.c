@@ -22,6 +22,7 @@ int main( int argc, char* argv[])
   Dataset* DS_Test;
   NNet* NN;
   unsigned int i,n,epoch;
+  double data[4][4] = { {1.0,1.0,0.0} , {1.0,0.0,1.0}, {0.0,1.0,1.0}, {0.0,0.0,0.0} };
 
   srand(time(NULL));
   n = 4;
@@ -31,22 +32,14 @@ int main( int argc, char* argv[])
   DS = dataset_create(n,2,1);
   assert( DS != NULL );
 
-  if (dataset_add(DS,3,1.0,1.0,0.0) != EXIT_SUCCESS)
+  for(i=0;i<n;i++)
     {
-      goto err0;
+      if (dataset_add(DS,data[i]) != EXIT_SUCCESS)
+	{
+	  goto err0;
+	}
     }
-  if (dataset_add(DS,3,1.0,0.0,1.0) != EXIT_SUCCESS)
-    {
-      goto err0;
-    }
-  if (dataset_add(DS,3,0.0,1.0,1.0) != EXIT_SUCCESS)
-    {
-      goto err0;
-    }
-  if (dataset_add(DS,3,0.0,0.0,1.0) != EXIT_SUCCESS)
-    {
-      goto err0;
-    }
+ 
 
  
   DS_Test = dataset_create(n,2,1);
@@ -54,23 +47,14 @@ int main( int argc, char* argv[])
     {
       goto err0;
     }
-  if (dataset_add(DS_Test,3,1.0,1.0,0.0) != EXIT_SUCCESS)
-    {
-      goto err1;
-    }
-  if (dataset_add(DS_Test,3,1.0,0.0,1.0) != EXIT_SUCCESS)
-    {
-      goto err1;
-    }
-  if (dataset_add(DS_Test,3,0.0,1.0,1.0) != EXIT_SUCCESS)
-    {
-      goto err1;
-    }
-  if (dataset_add(DS_Test,3,0.0,0.0,1.0) != EXIT_SUCCESS)
-    {
-      goto err1;
-    }
 
+  for(i=0;i<n;i++)
+    {
+      if (dataset_add(DS_Test,data[i]) != EXIT_SUCCESS)
+	{
+	  goto err1;
+	}
+    }
 
 
   NN = nnet_create(3,2,3,1);
@@ -97,8 +81,8 @@ int main( int argc, char* argv[])
   dataset_delete(DS);
 
 
-  // mnist_images("../mnist/train-images-idx3-ubyte");
-  mnist_labels("../mnist/train-labels-idx1-ubyte");
+  //mnist_images("../mnist/train-images-idx3-ubyte");
+  //mnist_labels("../mnist/train-labels-idx1-ubyte");
 
   return EXIT_SUCCESS;
 

@@ -23,7 +23,7 @@ typedef struct
 Dataset* dataset_create(unsigned int, unsigned int, unsigned int);
 int dataset_delete(Dataset*);
 int dataset_print(Dataset*);
-int dataset_add(Dataset*, unsigned int, ...);
+int dataset_add(Dataset*, double*);
 int dataset_shuffle(Dataset*);
 
 #endif

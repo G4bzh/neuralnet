@@ -6,7 +6,6 @@
 
 
 #include <stdlib.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
@@ -151,27 +150,22 @@ int dataset_print(Dataset* ds)
 
 */
 
-int dataset_add(Dataset* ds, unsigned int n, ...)
+int dataset_add(Dataset* ds, double* a)
 {
-   va_list valist;
    unsigned int i;
 
    assert(ds->cursor < ds->len);
-   assert( n == ds->in_len+ds->out_len);
-
-   va_start(valist, n);
 
    for(i=0;i<ds->in_len;i++)
     {     
-      ds->in[ds->cursor][i] = va_arg(valist,double);
+      ds->in[ds->cursor][i] = a[i];
     }
 
    for(i=0;i<ds->out_len;i++)
     {     
-      ds->out[ds->cursor][i] = va_arg(valist,double);
+      ds->out[ds->cursor][i] = a[ds->in_len+i];
     }
 
-  va_end(valist);
   ds->cursor++;
 
   return EXIT_SUCCESS;
@@ -194,7 +188,6 @@ int dataset_shuffle(Dataset* ds)
   for(i=0;i<ds->len;i++)
     {
       j = (unsigned int)(((double)rand()/(double)RAND_MAX)*ds->len);
-      /* XOR swap */
       if ( (i != j) && (j < ds->len) )
 	{
 	  double* tmp;
