@@ -69,10 +69,9 @@ Neuron* neuron_create(unsigned int n)
       
       /* Bias */
       N->weights[i] = 1;
-
-      N-> n_in = n;
     }
   
+  N-> n_in = n;  
   N->activation = neuron_sigmoid;
   N->output = 0;
   N->z = 0;
