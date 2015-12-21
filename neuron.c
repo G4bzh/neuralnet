@@ -63,7 +63,7 @@ Neuron* neuron_create(unsigned int n)
 
       for(i=0;i<n;i++)
 	{
-	  N->weights[i] = ((double)rand()/(double)RAND_MAX);
+	  N->weights[i] = ((double)(rand()-RAND_MAX/2)/(double)RAND_MAX);
 	  N->acc_grad_w[i] = 0;
 	}
       

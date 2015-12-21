@@ -47,6 +47,7 @@ int main( int argc, char* argv[])
   printf("Done !\n");
 
 
+
   NN = nnet_create(3,DS->in_len,30,DS->out_len);
   if (NN == NULL)
     {

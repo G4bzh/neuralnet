@@ -73,18 +73,18 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
       goto err0;
     } 
   n_i = ntohl(n_i);
-  
+
+
   if (read(fd_l,&n_l,sizeof(int)) != sizeof(int))
     {
       goto err0;
     } 
   n_l = ntohl(n_l);
-
+ 
   if( n_i != n_l)
     {
       goto err0;
     }
-
 
 
   if (read(fd_i,&rows,sizeof(int)) != sizeof(int))
@@ -177,12 +177,12 @@ int mnist_max_array(unsigned int n, double* a)
   assert(a != NULL);
   assert(n);
     
-  //printf("[%f ",a[0]);
+  // printf("[%f ",a[0]);
 
    for(i=1;i<n;i++)
     {
 
-      //printf("%f ",a[i]);
+      // printf("%f ",a[i]);
 
        if (a[i] > a[max])
 	{
