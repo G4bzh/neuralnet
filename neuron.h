@@ -15,8 +15,7 @@ typedef struct
   double* weights;                /* Input weights */
   double (*activation)(double);   /* Activation function */
   double output;                  /* Neuron output */
-  double z;                       /* Weighted input */
-  double z_derivative;            /* Activation Derivative applied to z */
+  double z_derivative;            /* Activation Derivative applied to weighted inputs */
   double error;                   /* Quadratic error */
   double* acc_grad_w;             /* Weight gradient accumulator */
   double acc_grad_b;              /* Bias gradient accumulator */

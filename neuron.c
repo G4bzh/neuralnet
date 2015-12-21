@@ -74,7 +74,6 @@ Neuron* neuron_create(unsigned int n)
   N-> n_in = n;  
   N->activation = neuron_sigmoid;
   N->output = 0;
-  N->z = 0;
   N->z_derivative = 0;
   N->error = 0;
   N->acc_grad_b = 0;

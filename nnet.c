@@ -240,7 +240,6 @@ int nnet_feedforward(NNet* NN, double* in)
 	      sum += NN->layers[i-1][k]->output *  NN->layers[i][j]->weights[k] ;
 	    }
 	  sum += NN->biases[i-1] * NN->layers[i][j]->weights[k];
-	  NN->layers[i][j]->z = sum;
 	  NN->layers[i][j]->output = NN->layers[i][j]->activation(sum);
 	  NN->layers[i][j]->z_derivative = NN->layers[i][j]->output*(1-NN->layers[i][j]->output); /* sigmoid' = sigmoid*(1-sigmoid) */
 	}
@@ -264,7 +263,15 @@ int nnet_backpropagation(NNet* NN, double* out)
     {
       /* derivative of quadratic cost : (target - output) */
       NN->layers[NN->n_layers-1][j]->error = (NN->layers[NN->n_layers-1][j]->output - out[j]) * NN->layers[NN->n_layers-1][j]->z_derivative;
-    }
+
+      /* Gradient Accumualtion */
+      for(k=0;k<NN->layers[NN->n_layers-1][j]->n_in;k++)
+	{
+	  NN->layers[NN->n_layers-1][j]->acc_grad_w[k] += NN->layers[NN->n_layers-1][j]->error *  NN->layers[NN->n_layers-1-1][k]->output; 
+	}
+      NN->layers[NN->n_layers-1][j]->acc_grad_b += NN->layers[NN->n_layers-1][j]->error;
+
+  }
 
   
   /* Error backpropagation */
@@ -278,22 +285,18 @@ int nnet_backpropagation(NNet* NN, double* out)
 	      sum += NN->layers[i+1][k]->weights[j] * NN->layers[i+1][k]->error;
 	    }
 	  NN->layers[i][j]->error = sum * NN->layers[i][j]->z_derivative;
-	}
-    }
 
-  /* Gradient Accumulation */
-  for(i=NN->n_layers-1;i>0;i--)
-    {
-      for(j=0;j<NN->n_neurons[i];j++)
-	{
+	  /* Gradient accumulation */
 	  for(k=0;k<NN->layers[i][j]->n_in;k++)
 	    {
 	      NN->layers[i][j]->acc_grad_w[k] += NN->layers[i][j]->error *  NN->layers[i-1][k]->output;
 	    }
 	  NN->layers[i][j]->acc_grad_b += NN->layers[i][j]->error;
+
 	}
     }
 
+ 
   return EXIT_SUCCESS;
 }
 
