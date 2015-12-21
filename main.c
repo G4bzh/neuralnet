@@ -25,7 +25,7 @@ int main( int argc, char* argv[])
  
 
   srand(time(NULL));
-  epoch = 10000; /* Must be great */
+  epoch = 30; /* Must be great */
 
 
   printf("Loading train images...");
@@ -47,26 +47,21 @@ int main( int argc, char* argv[])
   printf("Done !\n");
 
 
-
-  NN = nnet_create(3,DS->in_len,15,DS->out_len);
+  NN = nnet_create(3,DS->in_len,30,DS->out_len);
   if (NN == NULL)
     {
       goto err1;
     }
 
-  
-  /* for(i=0;i<epoch;i++) */
-  /*   { */
-  /*     if (dataset_shuffle(DS) != EXIT_SUCCESS) */
-  /* 	{ */
-  /* 	  goto err2; */
-  /* 	} */
-  /*     nnet_minibatch(NN,DS,10,1.0); */
-     
-  /*   } */
-
-  mnist_evaluate(NN,DS_Test);
-
+  for(i=0;i<epoch;i++)
+    {
+      if (dataset_shuffle(DS) != EXIT_SUCCESS)
+  	{
+  	  goto err2;
+  	}
+      nnet_minibatch(NN,DS,10,1.0);
+      printf("epoch %d : %u/%u\n", i,mnist_evaluate(NN,DS_Test),DS_Test->len);
+    }
  
   nnet_delete(NN);
   dataset_delete(DS_Test);

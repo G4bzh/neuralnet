@@ -132,7 +132,7 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
 
       for(l=0;l<MNIST_VALUES;l++)
 	{
-	  a[(rows*cols)+l] = (j==c?1:0);
+	  a[(rows*cols)+l] = (l==c?1:0);
 	}
 
       if ( dataset_add(ds,a) == EXIT_FAILURE )
@@ -169,15 +169,54 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
 
 */
 
-int mnist_max_dataset(unsigned int n, Dataset* ds)
+int mnist_max_array(unsigned int n, double* a)
 {
   int max = 0;
+  unsigned int i;
+
+  assert(a != NULL);
+  assert(n);
+    
+  printf("[%f ",a[0]);
+
+   for(i=1;i<n;i++)
+    {
+
+      printf("%f ",a[i]);
+
+       if (a[i] > a[max])
+	{
+	  max = i;
+	}
+    }
+ 
+   printf("]\n");
+
   return max;
 }
 
 int mnist_max_nnet(NNet* NN)
 {
   int max = 0;
+  unsigned int i;
+  
+  assert(NN != NULL);
+  
+  printf("[%f ",NN->layers[NN->n_layers-1][0]->output);
+
+  for(i=1;i<NN->n_neurons[NN->n_layers-1];i++)
+    {
+
+      printf("%f ",NN->layers[NN->n_layers-1][i]->output);
+
+      if (NN->layers[NN->n_layers-1][i]->output > NN->layers[NN->n_layers-1][max]->output)
+	{
+	  max = i;
+	}
+    }
+
+  printf("]\n");
+
   return max;  
 }
 
@@ -191,10 +230,21 @@ int mnist_max_nnet(NNet* NN)
 int mnist_evaluate(NNet* NN, Dataset * ds)
 {
   int n=0;
+  unsigned int i;
 
   assert(NN != NULL);
   assert(ds != NULL);
   assert(NN->n_neurons[NN->n_layers-1] == ds->out_len);
+
+  for(i=0;i<ds->len;i++)
+    {
+      assert( nnet_feedforward(NN,ds->in[i]) == EXIT_SUCCESS );
+      if ( mnist_max_nnet(NN) == mnist_max_array(ds->out_len,ds->out[i]) )
+	{
+	  n++;
+	}
+      printf("\n");
+    }
 
   return n;
 }
