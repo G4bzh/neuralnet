@@ -333,7 +333,7 @@ int nnet_backpropagation(NNet* NN, double* out)
 
 */
 
-int nnet_update(NNet* NN, double l)
+int nnet_update(NNet* NN, double l, double r)
 {
   unsigned int i,j,k;
 
@@ -346,7 +346,7 @@ int nnet_update(NNet* NN, double l)
 	{
 	  for(k=0;k<NN->layers[i][j]->n_in;k++)
 	    {
-	      NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_w[k] * l;
+	      NN->layers[i][j]->weights[k] = (1-r)*NN->layers[i][j]->weights[k] - NN->layers[i][j]->acc_grad_w[k] * l;
 	      NN->layers[i][j]->acc_grad_w[k] = 0; 
 	    }
 	  NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_b * l;
@@ -364,7 +364,7 @@ int nnet_update(NNet* NN, double l)
 
 */
 
-int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta)
+int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta, double lambda)
 {
   assert( NN != NULL );
   assert( ds != NULL );
@@ -381,7 +381,7 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta)
 	  assert( nnet_feedforward(NN,ds->in[j]) == EXIT_SUCCESS );
 	  assert( nnet_backpropagation(NN,ds->out[j])  == EXIT_SUCCESS );
 	}
-      assert( nnet_update(NN, eta/(double)n) == EXIT_SUCCESS );
+      assert( nnet_update(NN, eta/(double)n, eta*lambda/(double)ds->len) == EXIT_SUCCESS );
       i += n;
     }
   
