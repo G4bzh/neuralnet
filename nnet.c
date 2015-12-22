@@ -17,11 +17,37 @@
 
 /*
 
+  Cost Functions
+
+*/
+
+double nnet_quadratic(NNet* NN, double* a, unsigned int i)
+{
+  assert(NN != NULL);
+  assert(a != NULL);
+
+  return  (NN->layers[NN->n_layers-1][i]->output - a[i])* NN->layers[NN->n_layers-1][i]->z_derivative;
+}
+
+double nnet_crossentropy(NNet* NN, double* a, unsigned int i)
+{
+  assert(NN != NULL);
+  assert(a != NULL);
+
+  return  (NN->layers[NN->n_layers-1][i]->output - a[i]);
+}
+
+
+double (*costs[2])(NNet*, double*, unsigned int)= {nnet_quadratic, nnet_crossentropy};
+
+
+/*
+
   Creation
 
 */
 
-NNet* nnet_create(unsigned int n, ...)
+NNet* nnet_create(Cost c, unsigned int n, ...)
 {
   va_list valist;
   NNet* NN;
@@ -49,7 +75,6 @@ NNet* nnet_create(unsigned int n, ...)
       /* Variable parameters are the numbers of neurons per layer */
       NN->n_neurons[i] = va_arg(valist,unsigned int);
     }
-
   va_end(valist);
   
 
@@ -91,6 +116,7 @@ NNet* nnet_create(unsigned int n, ...)
     }
 
   NN->n_layers = n;
+  NN->cost = costs[c];
 
   return NN;
 
@@ -262,10 +288,10 @@ int nnet_backpropagation(NNet* NN, double* out)
   /* Last layer error */
   for(j=0;j<NN->n_neurons[NN->n_layers-1];j++)
     {
-      /* derivative of quadratic cost : (target - output) */
-      NN->layers[NN->n_layers-1][j]->error = (NN->layers[NN->n_layers-1][j]->output - out[j])* NN->layers[NN->n_layers-1][j]->z_derivative;
+      /* Error */
+      NN->layers[NN->n_layers-1][j]->error = NN->cost(NN,out,j);
 
-      /* Gradient Accumualtion */
+      /* Gradient Accumulation */
       for(k=0;k<NN->layers[NN->n_layers-1][j]->n_in;k++)
 	{
 	  NN->layers[NN->n_layers-1][j]->acc_grad_w[k] += NN->layers[NN->n_layers-1][j]->error *  NN->layers[NN->n_layers-1-1][k]->output; 

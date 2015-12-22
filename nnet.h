@@ -11,15 +11,24 @@
 #include "neuron.h"
 #include "dataset.h"
 
-typedef struct
+typedef struct NNet
 {
-  unsigned int n_layers;    /* Number of layers */
-  unsigned int* n_neurons;  /* Number of neurons per layer */
-  Neuron*** layers;         /* Per layer array of neurons */ 
-  double* biases;           /* Per layer biases */
+  unsigned int n_layers;                               /* Number of layers */
+  unsigned int* n_neurons;                             /* Number of neurons per layer */
+  Neuron*** layers;                                    /* Per layer array of neurons */ 
+  double* biases;                                      /* Per layer biases */
+  double (*cost)(struct NNet*, double*, unsigned int); /* Cost function */
 } NNet;
 
-NNet* nnet_create(unsigned int,...);
+
+typedef enum Cost
+  {
+    COST_QUADRATIC,
+    COST_CROSSENTROPY,
+  } Cost ;
+
+
+NNet* nnet_create(Cost, unsigned int, ...);
 int nnet_delete(NNet*);
 int nnet_print(NNet*);
 int nnet_feedforward(NNet*, double*);

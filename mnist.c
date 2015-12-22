@@ -86,7 +86,6 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
       goto err0;
     }
 
-
   if (read(fd_i,&rows,sizeof(int)) != sizeof(int))
     {
       goto err0;
