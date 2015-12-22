@@ -25,7 +25,7 @@ int main( int argc, char* argv[])
  
 
   srand(time(NULL));
-  epoch = 30;
+  epoch = 60;
 
 
   printf("Loading train images...");
@@ -60,7 +60,7 @@ int main( int argc, char* argv[])
   	{
   	  goto err2;
   	}
-      nnet_minibatch(NN,DS,10,0.5,5);
+      nnet_minibatch(NN,DS,10,0.1,5.0);
       printf("epoch %d : %u/%u\n", i,mnist_evaluate(NN,DS_Test),DS_Test->len);
     }
  
