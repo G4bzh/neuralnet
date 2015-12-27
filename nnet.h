@@ -18,6 +18,7 @@ typedef struct NNet
   Neuron*** layers;                                    /* Per layer array of neurons */ 
   double* biases;                                      /* Per layer biases */
   double (*cost)(struct NNet*, double*, unsigned int); /* Cost function */
+  double (*reg)(double,double);                        /* Regularization function */
 } NNet;
 
 
@@ -27,8 +28,15 @@ typedef enum Cost
     COST_CROSSENTROPY,
   } Cost ;
 
+typedef enum Reg
+  {
+    REG_NONE,
+    REG_L1,
+    REG_L2,
+  } Reg ;
 
-NNet* nnet_create(Cost, unsigned int, ...);
+
+NNet* nnet_create(Cost, Reg, unsigned int, ...);
 int nnet_delete(NNet*);
 int nnet_print(NNet*);
 int nnet_feedforward(NNet*, double*);

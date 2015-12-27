@@ -43,11 +43,42 @@ double (*costs[2])(NNet*, double*, unsigned int)= {nnet_quadratic, nnet_crossent
 
 /*
 
+  Regularization Functions
+
+ */
+
+
+double nnet_regL2(double r, double w)
+{
+  return r*w;
+}
+
+double nnet_regL1(double r, double w)
+{
+  if (w)
+    {
+      return r*(w>0?1:-1);
+    }
+
+  return 0.0;
+}
+
+double nnet_regNone(double r, double w)
+{
+  return 0.0;
+}
+
+double (*regs[3])(double,double) = {nnet_regNone, nnet_regL1, nnet_regL2};
+
+
+
+/*
+
   Creation
 
 */
 
-NNet* nnet_create(Cost c, unsigned int n, ...)
+NNet* nnet_create(Cost c, Reg r, unsigned int n, ...)
 {
   va_list valist;
   NNet* NN;
@@ -117,6 +148,7 @@ NNet* nnet_create(Cost c, unsigned int n, ...)
 
   NN->n_layers = n;
   NN->cost = costs[c];
+  NN->reg = regs[r];
 
   return NN;
 
@@ -346,7 +378,7 @@ int nnet_update(NNet* NN, double l, double r)
 	{
 	  for(k=0;k<NN->layers[i][j]->n_in;k++)
 	    {
-	      NN->layers[i][j]->weights[k] = (1-r)*NN->layers[i][j]->weights[k] - NN->layers[i][j]->acc_grad_w[k] * l;
+	      NN->layers[i][j]->weights[k] = NN->layers[i][j]->weights[k] - NN->reg(r,NN->layers[i][j]->weights[k]) - NN->layers[i][j]->acc_grad_w[k] * l;
 	      NN->layers[i][j]->acc_grad_w[k] = 0; 
 	    }
 	  NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_b * l;
