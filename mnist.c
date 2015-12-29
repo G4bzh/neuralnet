@@ -179,21 +179,15 @@ int mnist_max_array(unsigned int n, double* a)
   assert(a != NULL);
   assert(n);
     
-  // printf("[%f ",a[0]);
-
    for(i=1;i<n;i++)
     {
 
-      // printf("%f ",a[i]);
-
-       if (a[i] > a[max])
+      if (a[i] > a[max])
 	{
 	  max = i;
 	}
     }
  
-   //printf("]\n");
-
   return max;
 }
 
@@ -204,20 +198,14 @@ int mnist_max_nnet(NNet* NN)
   
   assert(NN != NULL);
   
-  //printf("[%f ",NN->layers[NN->n_layers-1][0]->output);
-
   for(i=1;i<NN->n_neurons[NN->n_layers-1];i++)
     {
-
-      //printf("%f ",NN->layers[NN->n_layers-1][i]->output);
 
       if (NN->layers[NN->n_layers-1][i]->output > NN->layers[NN->n_layers-1][max]->output)
 	{
 	  max = i;
 	}
     }
-
-  //printf("]\n");
 
   return max;  
 }
@@ -245,7 +233,6 @@ int mnist_evaluate(NNet* NN, Dataset * ds)
 	{
 	  n++;
 	}
-      //printf("\n");
     }
 
   return n;
