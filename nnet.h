@@ -36,7 +36,7 @@ typedef enum Reg
   } Reg ;
 
 
-NNet* nnet_create(Cost, Reg, unsigned int, ...);
+NNet* nnet_create(Cost, Reg, unsigned int, unsigned int*);
 int nnet_delete(NNet*);
 int nnet_print(NNet*);
 int nnet_feedforward(NNet*, double*);

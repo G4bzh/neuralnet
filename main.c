@@ -48,7 +48,8 @@ int main( int argc, char* argv[])
 
 
 
-  NN = nnet_create(COST_CROSSENTROPY,REG_L2,3,DS->in_len,100,DS->out_len);
+  unsigned int layers[] = {DS->in_len,100,DS->out_len};
+  NN = nnet_create(COST_CROSSENTROPY,REG_L2,3,layers);
   if (NN == NULL)
     {
       goto err1;

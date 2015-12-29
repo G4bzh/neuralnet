@@ -6,7 +6,6 @@
 
 
 #include <stdlib.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <assert.h>
 #include "neuron.h"
@@ -78,15 +77,15 @@ double (*regs[3])(double,double) = {nnet_regNone, nnet_regL1, nnet_regL2};
 
 */
 
-NNet* nnet_create(Cost c, Reg r, unsigned int n, ...)
+NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
 {
-  va_list valist;
   NNet* NN;
   unsigned int i,j,k,l;
 
   /* First parameter is the number of layers */
   assert(n > 1);
-  
+  assert(a != NULL);
+
   NN = (NNet*)malloc(sizeof(NNet));
   if (NN == NULL)
     {
@@ -99,14 +98,12 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, ...)
       goto err0;
     }
 
-  va_start(valist, n);
-  
+    
   for(i=0;i<n;i++)
     {
-      /* Variable parameters are the numbers of neurons per layer */
-      NN->n_neurons[i] = va_arg(valist,unsigned int);
+      /* Array contains  the numbers of neurons per layer */
+      NN->n_neurons[i] = a[i];
     }
-  va_end(valist);
   
 
   NN->biases = (double*)malloc(n*sizeof(double));
