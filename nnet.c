@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "neuron.h"
 #include "dataset.h"
 #include "nnet.h"
@@ -414,5 +418,36 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta, double lam
       i += n;
     }
   
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  Dump
+
+*/
+
+
+int nnet_dump(NNet* NN, char* filename)
+{
+  int fd;
+  unsigned int i;
+
+  assert(NN != NULL);
+  assert(filename != NULL);
+
+  fd = open(filename,O_CREAT | O_WRONLY | O_TRUNC, 0666);
+  assert(fd != -1);
+
+  assert(write(fd,&(NN->n_layers),sizeof(unsigned int)) != -1);
+
+  for(i=0;i<NN->n_layers;i++)
+    {
+      assert(write(fd,&(NN->n_neurons[i]),sizeof(unsigned int)) != -1);
+    }
+
+  close(fd);
+
   return EXIT_SUCCESS;
 }

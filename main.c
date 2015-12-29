@@ -64,6 +64,8 @@ int main( int argc, char* argv[])
       nnet_minibatch(NN,DS,10,0.1,5.0);
       printf("epoch %d : %u/%u\n", i,mnist_evaluate(NN,DS_Test),DS_Test->len);
     }
+
+  nnet_dump(NN,"dump");
  
   nnet_delete(NN);
   dataset_delete(DS_Test);
