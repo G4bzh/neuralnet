@@ -23,7 +23,7 @@ typedef struct
 
 
 
-Neuron* neuron_create(unsigned int);
+Neuron* neuron_create(unsigned int, double*);
 int neuron_delete(Neuron*);
 int neuron_print(Neuron*);
 double neuron_sigmoid(double);

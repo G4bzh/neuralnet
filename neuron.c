@@ -32,7 +32,7 @@ double neuron_sigmoid(double x)
 
 
 
-Neuron* neuron_create(unsigned int n)
+Neuron* neuron_create(unsigned int n, double* a)
 {
   Neuron* N;
   unsigned int i;
@@ -61,16 +61,29 @@ Neuron* neuron_create(unsigned int n)
 	  return NULL;
 	}
 
-      for(i=0;i<n;i++)
+     
+      if (a == NULL)
 	{
-	  N->weights[i] = ((double)(rand()-RAND_MAX/2)/(double)RAND_MAX);
-	  N->acc_grad_w[i] = 0;
+	  for(i=0;i<n;i++)
+	    {
+	      N->weights[i] = ((double)(rand()-RAND_MAX/2)/(double)RAND_MAX);
+	      N->acc_grad_w[i] = 0;
+	    }
+	}
+      else
+	{
+	  for(i=0;i<n;i++)
+	    {
+	      N->weights[i] = a[i];
+	      N->acc_grad_w[i] = 0;
+	    }
 	}
       
       /* Bias */
-      N->weights[i] = 1;
+      N->weights[n] = 1;
+      
     }
-  
+ 
   N-> n_in = n;  
   N->activation = neuron_sigmoid;
   N->output = 0;

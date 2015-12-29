@@ -138,7 +138,7 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, ...)
      
       for(j=0;j<NN->n_neurons[i];j++)
       {
-      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]));
+      	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]),NULL);
       	if (NN->layers[i][j] == NULL)
       	  {
       	    goto err3;
