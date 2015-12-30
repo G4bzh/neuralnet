@@ -25,7 +25,7 @@ int main( int argc, char* argv[])
  
 
   srand(time(NULL));
-  epoch = 30;
+  epoch = 3;
 
 
   printf("Loading train images...");

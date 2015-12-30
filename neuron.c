@@ -68,7 +68,7 @@ Neuron* neuron_create(unsigned int n, double* a)
 	  for(i=0;i<n;i++)
 	    {
 	      N->weights[i] = ((double)(rand()-RAND_MAX/2)/(double)RAND_MAX);
-	      N->acc_grad_w[i] = 0;
+	      N->acc_grad_w[i] = 0.0;
 	    }
 	}
       else
@@ -76,12 +76,12 @@ Neuron* neuron_create(unsigned int n, double* a)
 	  for(i=0;i<n;i++)
 	    {
 	      N->weights[i] = a[i];
-	      N->acc_grad_w[i] = 0;
+	      N->acc_grad_w[i] = 0.0;
 	    }
 	}
       
       /* Bias */
-      N->weights[n] = 1;
+      N->weights[n] = 1.0;
       
     }
  
@@ -159,5 +159,22 @@ int neuron_print(Neuron* N)
 
 int neuron_dump(int fd, Neuron* N)
 {
+  unsigned int i;
+
+  assert(N != NULL);
+  assert(fd != -1);
+
+  assert(write(fd,&(N->n_in),sizeof(unsigned int)) != -1);
+
+  if (N->n_in)
+    {
+      for(i=0;i<N->n_in;i++)
+	{
+	  assert(write(fd,&(N->weights[i]),sizeof(double)) != -1);
+	}
+      
+      assert(write(fd,&(N->weights[i]),sizeof(double)) != -1);
+    }
+
   return EXIT_SUCCESS;
 }
