@@ -22,10 +22,10 @@ int main( int argc, char* argv[])
   Dataset* DS_Test;
   NNet* NN;
   unsigned int i,epoch;
- 
+  int e,max = 0;
 
   srand(time(NULL));
-  epoch = 3;
+  epoch = 30;
 
 
   printf("Loading train images...");
@@ -62,21 +62,27 @@ int main( int argc, char* argv[])
   	  goto err2;
   	}
       nnet_minibatch(NN,DS,10,0.1,5.0);
-      printf("epoch %d : %u/%u\n", i,mnist_evaluate(NN,DS_Test),DS_Test->len);
+      e = mnist_evaluate(NN,DS_Test);
+      printf("epoch %d: %u/%u", i,e,DS_Test->len);
+      if (e > max)
+	{
+	  max =  e;
+	  assert(nnet_dump(NN,"dump") == EXIT_SUCCESS);
+	  printf(" (*)");
+	}
+      printf("\n");
     }
 
-  nnet_dump(NN,"dump");
+
 
   nnet_delete(NN);
   dataset_delete(DS);
 
   NN = nnet_restore("dump");
   assert(NN != NULL);
-
   printf("Restored : %u/%u\n",mnist_evaluate(NN,DS_Test),DS_Test->len);
+  
   nnet_delete(NN);
-
-
   dataset_delete(DS_Test);
 
   return EXIT_SUCCESS;
