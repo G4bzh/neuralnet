@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <sys/time.h>  
 #include <time.h>
 #include <assert.h>
 #include "dataset.h"
@@ -23,6 +24,8 @@ int main( int argc, char* argv[])
   NNet* NN;
   unsigned int i,epoch;
   int e,max = 0;
+  double elapsed = 0.0;
+  struct timeval end_tv, start_tv;
 
   srand(time(NULL));
   epoch = 30;
@@ -55,6 +58,9 @@ int main( int argc, char* argv[])
       goto err1;
     }
 
+  printf("Training started\n");
+  gettimeofday(&start_tv, NULL);
+
   for(i=0;i<epoch;i++)
     {
       if (dataset_shuffle(DS) != EXIT_SUCCESS)
@@ -73,6 +79,9 @@ int main( int argc, char* argv[])
       printf("\n");
     }
 
+  gettimeofday(&end_tv, NULL);
+  elapsed = (end_tv.tv_sec - start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.0;
+  printf("Training ended (%f s.)\n",elapsed);
 
 
   nnet_delete(NN);
