@@ -178,3 +178,34 @@ int neuron_dump(int fd, Neuron* N)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Restore
+
+*/
+
+
+int neuron_restore(int fd, Neuron* N)
+{
+  unsigned int i;
+
+  assert(N != NULL);
+  assert(fd != -1);
+
+  assert(read(fd,&i,sizeof(unsigned int)) != -1);
+  assert( N->n_in == i);
+
+  if (N->n_in)
+    {
+      for(i=0;i<N->n_in;i++)
+	{
+	  assert(read(fd,&(N->weights[i]),sizeof(double)) != -1);
+	}
+      
+      assert(read(fd,&(N->weights[i]),sizeof(double)) != -1);
+    }
+  
+  return EXIT_SUCCESS;
+}

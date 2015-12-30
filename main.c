@@ -66,10 +66,18 @@ int main( int argc, char* argv[])
     }
 
   nnet_dump(NN,"dump");
- 
+
   nnet_delete(NN);
-  dataset_delete(DS_Test);
   dataset_delete(DS);
+
+  NN = nnet_restore("dump");
+  assert(NN != NULL);
+
+  printf("Restored : %u/%u\n",mnist_evaluate(NN,DS_Test),DS_Test->len);
+  nnet_delete(NN);
+
+
+  dataset_delete(DS_Test);
 
   return EXIT_SUCCESS;
 

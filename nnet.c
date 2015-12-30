@@ -461,3 +461,70 @@ int nnet_dump(NNet* NN, char* filename)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+  
+  Restore
+
+*/
+
+NNet* nnet_restore(char* filename)
+{
+  NNet* NN;
+  int fd;
+  unsigned int i,j, n,c,r;
+  unsigned int* a;
+
+  assert(filename != NULL);
+
+  fd = open(filename,O_RDONLY);
+  assert(fd != -1);
+
+  assert(read(fd,&n,sizeof(unsigned int)) != -1);
+  assert(read(fd,&c,sizeof(unsigned int)) != -1);
+  assert(read(fd,&r,sizeof(unsigned int)) != -1);
+
+  a = (unsigned int*)malloc(n*sizeof(unsigned int));
+  assert(a != NULL);
+
+  for(i=0;i<n;i++)
+    {
+      if (read(fd,&(a[i]),sizeof(unsigned int)) == -1)
+	{
+	  goto err0;
+	}
+    }
+  
+  NN = nnet_create(c,r,n,a);
+  if (NN == NULL)
+    {
+      goto err0;
+    }
+ 
+  for(i=0;i<n;i++)
+    {
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  if (neuron_restore(fd,NN->layers[i][j]) != EXIT_SUCCESS)
+	    {
+	      goto err1;
+	    }
+	}
+    }
+
+
+  free(a);
+
+  return NN;
+  
+ err1:
+  
+  nnet_delete(NN);
+
+ err0:
+
+  free(a);
+  
+return NULL;
+}

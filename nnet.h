@@ -48,5 +48,6 @@ int nnet_backpropagation(NNet*, double*);
 int nnet_update(NNet*, double, double);
 int nnet_minibatch(NNet*, Dataset*, unsigned int, double, double);
 int nnet_dump(NNet*, char*);
+NNet* nnet_restore(char*);
 
 #endif
