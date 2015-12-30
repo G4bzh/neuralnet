@@ -11,15 +11,6 @@
 #include "neuron.h"
 #include "dataset.h"
 
-typedef struct NNet
-{
-  unsigned int n_layers;                               /* Number of layers */
-  unsigned int* n_neurons;                             /* Number of neurons per layer */
-  Neuron*** layers;                                    /* Per layer array of neurons */ 
-  double* biases;                                      /* Per layer biases */
-  double (*cost)(struct NNet*, double*, unsigned int); /* Cost function */
-  double (*reg)(double,double);                        /* Regularization function */
-} NNet;
 
 
 typedef enum Cost
@@ -34,6 +25,19 @@ typedef enum Reg
     REG_L1,
     REG_L2,
   } Reg ;
+
+
+typedef struct NNet
+{
+  unsigned int n_layers;                               /* Number of layers */
+  unsigned int* n_neurons;                             /* Number of neurons per layer */
+  Neuron*** layers;                                    /* Per layer array of neurons */ 
+  double* biases;                                      /* Per layer biases */
+  Cost cost;                                           /* Cost function */
+  Reg reg;                                             /* Regularization function */
+} NNet;
+
+
 
 
 NNet* nnet_create(Cost, Reg, unsigned int, unsigned int*);

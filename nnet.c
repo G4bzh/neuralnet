@@ -148,8 +148,8 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
     }
 
   NN->n_layers = n;
-  NN->cost = costs[c];
-  NN->reg = regs[r];
+  NN->cost = c;
+  NN->reg = r;
 
   return NN;
 
@@ -322,7 +322,7 @@ int nnet_backpropagation(NNet* NN, double* out)
   for(j=0;j<NN->n_neurons[NN->n_layers-1];j++)
     {
       /* Error */
-      NN->layers[NN->n_layers-1][j]->error = NN->cost(NN,out,j);
+      NN->layers[NN->n_layers-1][j]->error = (costs[NN->cost])(NN,out,j);
 
       /* Gradient Accumulation */
       for(k=0;k<NN->layers[NN->n_layers-1][j]->n_in;k++)
@@ -379,7 +379,7 @@ int nnet_update(NNet* NN, double l, double r)
 	{
 	  for(k=0;k<NN->layers[i][j]->n_in;k++)
 	    {
-	      NN->layers[i][j]->weights[k] = NN->layers[i][j]->weights[k] - NN->reg(r,NN->layers[i][j]->weights[k]) - NN->layers[i][j]->acc_grad_w[k] * l;
+	      NN->layers[i][j]->weights[k] = NN->layers[i][j]->weights[k] - (regs[NN->reg])(r,NN->layers[i][j]->weights[k]) - NN->layers[i][j]->acc_grad_w[k] * l;
 	      NN->layers[i][j]->acc_grad_w[k] = 0; 
 	    }
 	  NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_b * l;
