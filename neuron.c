@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
+#include <unistd.h>
 #include "neuron.h"
 
 
@@ -152,5 +153,11 @@ int neuron_print(Neuron* N)
       printf("[ input | %f ] ", N->output);
     }
 
+  return EXIT_SUCCESS;
+}
+
+
+int neuron_dump(int fd, Neuron* N)
+{
   return EXIT_SUCCESS;
 }

@@ -432,7 +432,7 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta, double lam
 int nnet_dump(NNet* NN, char* filename)
 {
   int fd;
-  unsigned int i;
+  unsigned int i,j;
 
   assert(NN != NULL);
   assert(filename != NULL);
@@ -441,10 +441,20 @@ int nnet_dump(NNet* NN, char* filename)
   assert(fd != -1);
 
   assert(write(fd,&(NN->n_layers),sizeof(unsigned int)) != -1);
+  assert(write(fd,&(NN->cost),sizeof(unsigned int)) != -1);
+  assert(write(fd,&(NN->reg),sizeof(unsigned int)) != -1);
 
   for(i=0;i<NN->n_layers;i++)
     {
       assert(write(fd,&(NN->n_neurons[i]),sizeof(unsigned int)) != -1);
+    }
+
+  for(i=0;i<NN->n_layers;i++)
+    {
+      for(j=0;j<NN->n_neurons[i];j++)
+	{
+	  neuron_dump(fd,NN->layers[i][j]);
+	}
     }
 
   close(fd);
