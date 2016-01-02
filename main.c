@@ -22,7 +22,6 @@ int main( int argc, char* argv[])
   Dataset* DS;
   Dataset* DS_Test;
   NNet* NN;
-  NNet* a[2];
   unsigned int i,epoch;
   int e,max = 0;
   double elapsed = 0.0;
@@ -46,7 +45,7 @@ int main( int argc, char* argv[])
   DS_Test = mnist_load("../mnist/t10k-images-idx3-ubyte","../mnist/t10k-labels-idx1-ubyte");
   if ( DS_Test == NULL)
     {
-      goto err1;
+      goto err0;
     }
   printf("Done !\n");
 
@@ -59,26 +58,6 @@ int main( int argc, char* argv[])
       goto err1;
     }
 
-  a[0] = nnet_create(COST_CROSSENTROPY,REG_L2,3,layers);
-  if (a[0] == NULL)
-    {
-      goto err2;
-    }
-  a[1] = nnet_create(COST_CROSSENTROPY,REG_L2,3,layers);
-  if (a[1] == NULL)
-    {
-      goto err3;
-    }
-  
-  nnet_copy(NN,2,a);
-  printf("NN l:%u N:%u w:%u : %f\n",1,4,5,NN->layers[1][4]->weights[5]);
-  printf("a[0] l:%u N:%u w:%u : %f\n",1,4,5,a[0]->layers[1][4]->weights[5]);
-  printf("a[1] l:%u N:%u w:%u : %f\n",1,4,5,a[1]->layers[1][4]->weights[5]);
-  nnet_merge(NN,2,a);
-  printf("Merged NN l:%u N:%u w:%u : %f\n",1,4,5,NN->layers[1][4]->weights[5]);
- 
-
-
   printf("Training started\n");
   gettimeofday(&start_tv, NULL);
 
@@ -86,9 +65,10 @@ int main( int argc, char* argv[])
     {
       if (dataset_shuffle(DS) != EXIT_SUCCESS)
   	{
-  	  goto err4;
+  	  goto err2;
   	}
       nnet_minibatch(NN,DS,10,0.1,5.0);
+           
       e = mnist_evaluate(NN,DS_Test);
       printf("epoch %d: %u/%u", i,e,DS_Test->len);
       if (e > max)
@@ -104,9 +84,6 @@ int main( int argc, char* argv[])
   elapsed = (end_tv.tv_sec - start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.0;
   printf("Training ended (%f s.)\n",elapsed);
 
-
-  nnet_delete(a[1]);
-  nnet_delete(a[0]);
   nnet_delete(NN);
   dataset_delete(DS);
 
@@ -119,11 +96,6 @@ int main( int argc, char* argv[])
 
   return EXIT_SUCCESS;
 
- err4:
-  nnet_delete(a[1]);
-
- err3:
-  nnet_delete(a[0]);
 
  err2:
 
