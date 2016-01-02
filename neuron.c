@@ -209,3 +209,30 @@ int neuron_restore(int fd, Neuron* N)
   
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Copy
+
+*/
+
+int neuron_copy(Neuron* N0, Neuron* N1)
+{
+  unsigned int i;
+
+  assert(N0 != NULL);
+  assert(N1 != NULL);
+  assert(N0->n_in == N1->n_in);
+  
+  for(i=0;i<N0->n_in;i++)
+    {
+      N1->weights[i] = N0->weights[i];
+      N1->acc_grad_w[i] = N0->acc_grad_w[i];
+    }
+  /* bias */
+  N1->weights[i] = N0->weights[i];
+  N1->acc_grad_b = N0->acc_grad_b;
+
+  return EXIT_SUCCESS;
+}
