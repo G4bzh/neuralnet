@@ -236,3 +236,30 @@ int neuron_copy(Neuron* N0, Neuron* N1)
 
   return EXIT_SUCCESS;
 }
+
+
+/* 
+
+   Merge
+
+*/
+
+int neuron_merge(Neuron* N0, Neuron* N1)
+{
+  unsigned int i;
+
+  assert(N0 != NULL);
+  assert(N1 != NULL);
+  assert(N0->n_in == N1->n_in);
+  
+  for(i=0;i<N0->n_in;i++)
+    {
+      N0->weights[i] += N1->weights[i];
+      N0->acc_grad_w[i] += N1->acc_grad_w[i];
+    }
+  /* bias */
+  N0->weights[i] += N1->weights[i];
+  N0->acc_grad_b += N1->acc_grad_b;
+
+  return EXIT_SUCCESS;
+}

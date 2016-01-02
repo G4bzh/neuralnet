@@ -558,3 +558,34 @@ int nnet_copy(NNet* NN,unsigned int n,NNet** a)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Merge
+
+*/
+
+int nnet_merge(NNet* NN,unsigned int n,NNet** a)
+{
+  unsigned int i,j,k;
+  
+  assert(NN != NULL);
+  assert(n);
+  assert(a != NULL);
+
+  
+  for(j=1;j<NN->n_layers;j++)
+    {
+      for(k=0;k<NN->n_neurons[j];k++)
+	{
+	  for(i=0;i<n;i++)
+	    {
+	      assert(neuron_merge(NN->layers[j][k],a[i]->layers[j][k]) == EXIT_SUCCESS);
+	    }
+	}
+    }
+
+
+  return EXIT_SUCCESS;
+}

@@ -74,7 +74,9 @@ int main( int argc, char* argv[])
   printf("NN l:%u N:%u w:%u : %f\n",1,4,5,NN->layers[1][4]->weights[5]);
   printf("a[0] l:%u N:%u w:%u : %f\n",1,4,5,a[0]->layers[1][4]->weights[5]);
   printf("a[1] l:%u N:%u w:%u : %f\n",1,4,5,a[1]->layers[1][4]->weights[5]);
-
+  nnet_merge(NN,2,a);
+  printf("Merged NN l:%u N:%u w:%u : %f\n",1,4,5,NN->layers[1][4]->weights[5]);
+ 
 
 
   printf("Training started\n");

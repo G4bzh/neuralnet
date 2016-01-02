@@ -50,5 +50,6 @@ int nnet_minibatch(NNet*, Dataset*, unsigned int, double, double);
 int nnet_dump(NNet*, char*);
 NNet* nnet_restore(char*);
 int nnet_copy(NNet*,unsigned int,NNet**);
+int nnet_merge(NNet*,unsigned int,NNet**);
 
 #endif
