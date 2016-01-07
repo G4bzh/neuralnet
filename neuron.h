@@ -9,10 +9,11 @@
 #define NEURON_H
 
 
-typedef struct
+typedef struct Neuron
 {
   unsigned int n_in;              /* Number of inputs */
   double* weights;                /* Input weights */
+  struct Neuron** prevs;          /* Previous neurons */
   double (*activation)(double);   /* Activation function */
   double output;                  /* Neuron output */
   double z_derivative;            /* Activation Derivative applied to weighted inputs */
@@ -23,7 +24,7 @@ typedef struct
 
 
 
-Neuron* neuron_create(unsigned int, double*);
+Neuron* neuron_create(unsigned int, double*, Neuron**);
 int neuron_delete(Neuron*);
 int neuron_print(Neuron*);
 double neuron_sigmoid(double);

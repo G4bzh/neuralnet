@@ -33,7 +33,7 @@ double neuron_sigmoid(double x)
 
 
 
-Neuron* neuron_create(unsigned int n, double* a)
+Neuron* neuron_create(unsigned int n, double* a, Neuron** p)
 {
   Neuron* N;
   unsigned int i;
@@ -46,6 +46,8 @@ Neuron* neuron_create(unsigned int n, double* a)
 
   if (n)
     {
+      assert(p != NULL);
+
       /* (n+1) in malloc : bias */
       N->weights = (double*)malloc((n+1)*sizeof(double));
       if (N->weights == NULL)
@@ -54,9 +56,23 @@ Neuron* neuron_create(unsigned int n, double* a)
 	  return NULL;
 	}
 
+      N->prevs = (Neuron**)malloc(n*sizeof(Neuron*));
+      if (N->prevs == NULL)
+	{
+	  free(N->weights);
+	  free(N);
+	  return NULL;
+	}
+
+      for(i=0;i<n;i++)
+	{
+	  N->prevs[i] = p[i];
+	}
+
       N->acc_grad_w = (double*)malloc((n)*sizeof(double));
       if (N->acc_grad_w == NULL)
 	{
+	  free(N->prevs);
 	  free(N->weights);
 	  free(N);
 	  return NULL;
@@ -114,6 +130,7 @@ int neuron_delete(Neuron* N)
   if (N->n_in)
     {
       free(N->weights);
+      free(N->prevs);
       free(N->acc_grad_w);
     }
 
