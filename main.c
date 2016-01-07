@@ -74,7 +74,7 @@ int main( int argc, char* argv[])
       if (e > max)
       	{
       	  max =  e;
-      	  // assert(nnet_dump(NN,"dump") == EXIT_SUCCESS);
+      	  assert(nnet_dump(NN,"dump") == EXIT_SUCCESS);
       	  printf(" (*)");
       	}
       printf("\n");
@@ -87,11 +87,11 @@ int main( int argc, char* argv[])
   nnet_delete(NN);
   dataset_delete(DS);
 
-  /* NN = nnet_restore("dump"); */
-  /* assert(NN != NULL); */
-  /* printf("Restored : %u/%u\n",mnist_evaluate(NN,DS_Test),DS_Test->len); */
+  NN = nnet_restore("dump");
+  assert(NN != NULL);
+  printf("Restored : %u/%u\n",mnist_evaluate(NN,DS_Test),DS_Test->len);
   
-  /* nnet_delete(NN); */
+  nnet_delete(NN);
   dataset_delete(DS_Test);
 
   return EXIT_SUCCESS;

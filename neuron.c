@@ -234,7 +234,7 @@ int neuron_restore(int fd, Neuron* N)
 
 */
 
-int neuron_feedforward(Neuron* N)
+inline int neuron_feedforward(Neuron* N)
 {
   assert( N != NULL );
   assert( N->n_in );
@@ -262,7 +262,7 @@ int neuron_feedforward(Neuron* N)
 
 */
 
-int neuron_backpropagation(Neuron* N, double* e)
+inline int neuron_backpropagation(Neuron* N, double* e)
 {
   assert( N != NULL );
   assert( N->n_in );
@@ -299,7 +299,7 @@ int neuron_backpropagation(Neuron* N, double* e)
 
 */
 
-int neuron_update(Neuron* N, double l, double r, double (*reg)(double,double))
+inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,double))
 {
   assert( N != NULL );
   assert( N->n_in );
