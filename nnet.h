@@ -32,7 +32,6 @@ typedef struct NNet
   unsigned int n_layers;                               /* Number of layers */
   unsigned int* n_neurons;                             /* Number of neurons per layer */
   Neuron*** layers;                                    /* Per layer array of neurons */ 
-  double* biases;                                      /* Per layer biases */
   Cost cost;                                           /* Cost function */
   Reg reg;                                             /* Regularization function */
 } NNet;

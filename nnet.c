@@ -109,22 +109,11 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
       NN->n_neurons[i] = a[i];
     }
   
-
-  NN->biases = (double*)malloc(n*sizeof(double));
-  if (NN->biases == NULL)
-    {
-      goto err1;
-    }
-
-  for(i=0;i<n;i++)
-    {
-      NN->biases[i] = 1;
-    }
   
   NN->layers = (Neuron***)malloc(n*sizeof(Neuron**));
   if (NN->layers == NULL)
     {
-      goto err2;
+      goto err1;
     }			    
 
   j=0;
@@ -134,7 +123,7 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
       NN->layers[i] = (Neuron**)malloc(NN->n_neurons[i]*sizeof(Neuron*));
       if (NN->layers[i] == NULL)
       	{
-      	  goto err3;
+      	  goto err2;
       	}
      
       for(j=0;j<NN->n_neurons[i];j++)
@@ -142,7 +131,7 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
       	NN->layers[i][j] = neuron_create((i==0?0:NN->n_neurons[i-1]),NULL,(i==0?NULL:NN->layers[i-1]));
       	if (NN->layers[i][j] == NULL)
       	  {
-      	    goto err3;
+      	    goto err2;
       	  }
       }
     }
@@ -153,7 +142,7 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
 
   return NN;
 
- err3:
+ err2:
   for(k=0;k<i;k++)
     {
       for(l=0;l<j;l++)
@@ -165,8 +154,6 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
 
   free(NN->layers);
 
- err2:
-  free(NN->biases);
 
  err1:
   free(NN->n_neurons);
@@ -204,7 +191,6 @@ int nnet_delete(NNet* NN)
     }
   free(NN->layers);
   free(NN->n_neurons);
-  free(NN->biases);
   free(NN);
   
   return EXIT_SUCCESS;
