@@ -304,8 +304,8 @@ int nnet_feedforward(NNet* NN, double* in)
 
 int nnet_backpropagation(NNet* NN, double* out)
 {
-  unsigned int i,j,k;
-  double sum;
+  unsigned int i,j;
+  double e;
 
   assert(NN != NULL);
   assert(out != NULL);
@@ -313,36 +313,17 @@ int nnet_backpropagation(NNet* NN, double* out)
   /* Last layer error */
   for(j=0;j<NN->n_neurons[NN->n_layers-1];j++)
     {
-      /* Error */
-      NN->layers[NN->n_layers-1][j]->error = (costs[NN->cost])(NN,out,j);
-
-      /* Gradient Accumulation */
-      for(k=0;k<NN->layers[NN->n_layers-1][j]->n_in;k++)
-	{
-	  NN->layers[NN->n_layers-1][j]->acc_grad_w[k] += NN->layers[NN->n_layers-1][j]->error *  NN->layers[NN->n_layers-1-1][k]->output; 
-	}
-      NN->layers[NN->n_layers-1][j]->acc_grad_b += NN->layers[NN->n_layers-1][j]->error;
-
-  }
-
+      e = (costs[NN->cost])(NN,out,j);
+      neuron_backpropagation(NN->layers[NN->n_layers-1][j], &e); 
+    }
+  
   /* Error backpropagation */
   for(i=NN->n_layers-2;i>0;i--)
     {
       for(j=0;j<NN->n_neurons[i];j++)
 	{
-	  sum = 0;
-	  for(k=0;k<NN->n_neurons[i+1];k++)
-	    {
-	      sum += NN->layers[i+1][k]->weights[j] * NN->layers[i+1][k]->error;
-	    }
-	  NN->layers[i][j]->error = sum * NN->layers[i][j]->z_derivative;
 
-	  /* Gradient accumulation */
-	  for(k=0;k<NN->layers[i][j]->n_in;k++)
-	    {
-	      NN->layers[i][j]->acc_grad_w[k] += NN->layers[i][j]->error *  NN->layers[i-1][k]->output;
-	    }
-	  NN->layers[i][j]->acc_grad_b += NN->layers[i][j]->error;
+	  neuron_backpropagation(NN->layers[i][j], NULL);
 
 	}
     }
@@ -360,7 +341,7 @@ int nnet_backpropagation(NNet* NN, double* out)
 
 int nnet_update(NNet* NN, double l, double r)
 {
-  unsigned int i,j,k;
+  unsigned int i,j;
 
   assert(NN != NULL);
   assert(l);
@@ -369,13 +350,7 @@ int nnet_update(NNet* NN, double l, double r)
     {
       for(j=0;j<NN->n_neurons[i];j++)
 	{
-	  for(k=0;k<NN->layers[i][j]->n_in;k++)
-	    {
-	      NN->layers[i][j]->weights[k] = NN->layers[i][j]->weights[k] - (regs[NN->reg])(r,NN->layers[i][j]->weights[k]) - NN->layers[i][j]->acc_grad_w[k] * l;
-	      NN->layers[i][j]->acc_grad_w[k] = 0; 
-	    }
-	  NN->layers[i][j]->weights[k] -= NN->layers[i][j]->acc_grad_b * l;
-	  NN->layers[i][j]->acc_grad_b = 0;
+	  neuron_update(NN->layers[i][j],l,r,regs[NN->reg]);
 	}
     }
 

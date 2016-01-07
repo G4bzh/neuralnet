@@ -250,6 +250,70 @@ int neuron_feedforward(Neuron* N)
 
   N->output = N->activation(sum);
   N->z_derivative = N->output*(1-N->output);
+  N->error = 0;
 
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  Backpropagation
+
+*/
+
+int neuron_backpropagation(Neuron* N, double* e)
+{
+  assert( N != NULL );
+  assert( N->n_in );
+
+  unsigned int i;
+
+  /* Error */
+  if (e == NULL)
+    {
+      N->error *= N->z_derivative;
+    }
+  else
+    {
+      N->error = *e;
+    }
+
+  for(i=0;i<N->n_in;i++)
+    {
+      /* Backpropagate error */
+      N->prevs[i]->error += N->error * N->weights[i];
+      /* Gradient Accumulation */
+      N->acc_grad_w[i] +=  N->error * N->prevs[i]->output;
+    }
+  N->acc_grad_b +=  N->error;
+
+
+  return EXIT_SUCCESS;
+  
+}
+
+/*
+
+  Update
+
+*/
+
+int neuron_update(Neuron* N, double l, double r, double (*reg)(double,double))
+{
+  assert( N != NULL );
+  assert( N->n_in );
+
+  unsigned int i;
+
+  for(i=0;i<N->n_in;i++)
+    {
+      N->weights[i] -= N->acc_grad_w[i]*l + reg(r,N->weights[i]);
+      N->acc_grad_w[i] = 0;
+    }
+  N->weights[i] -= N->acc_grad_b * l;
+  N->acc_grad_b = 0;
+
+  
   return EXIT_SUCCESS;
 }

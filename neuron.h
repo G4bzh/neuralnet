@@ -31,5 +31,7 @@ double neuron_sigmoid(double);
 int neuron_dump(int, Neuron*);
 int neuron_restore(int, Neuron*);
 int neuron_feedforward(Neuron*);
+int neuron_backpropagation(Neuron*, double*);
+int neuron_update(Neuron*, double, double, double (*reg)(double,double));
 
 #endif
