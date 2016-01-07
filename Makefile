@@ -19,4 +19,5 @@ neuron.o: neuron.c neuron.h
 
 clean:
 	rm -f *.o
+	rm -f *~
 	rm -f $(EXEC)
