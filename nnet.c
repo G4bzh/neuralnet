@@ -276,7 +276,7 @@ int nnet_print(NNet* NN)
 
 int nnet_feedforward(NNet* NN, double* in)
 {
-  unsigned int i,j,k;
+  unsigned int i,j;
 
   assert(NN != NULL);
   assert(in != NULL);
@@ -293,15 +293,7 @@ int nnet_feedforward(NNet* NN, double* in)
     {
       for(j=0;j<NN->n_neurons[i];j++)
 	{
-	  double sum=0;
-	  for(k=0;k<NN->n_neurons[i-1];k++)
-	    {
-	      sum += NN->layers[i-1][k]->output *  NN->layers[i][j]->weights[k] ;
-	    }
-	  sum += NN->biases[i-1] * NN->layers[i][j]->weights[k];
-	  NN->layers[i][j]->output = NN->layers[i][j]->activation(sum);
-	  NN->layers[i][j]->z_derivative = NN->layers[i][j]->output*(1-NN->layers[i][j]->output); /* sigmoid' = sigmoid*(1-sigmoid) */
-
+	  neuron_feedforward( NN->layers[i][j] );
 	}
       
     }

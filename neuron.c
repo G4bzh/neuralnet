@@ -226,3 +226,30 @@ int neuron_restore(int fd, Neuron* N)
   
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  FeedForward
+
+*/
+
+int neuron_feedforward(Neuron* N)
+{
+  assert( N != NULL );
+  assert( N->n_in );
+
+  double sum = 0.0;
+  unsigned int i;
+
+  for(i=0;i<N->n_in;i++)
+    {
+      sum += N->prevs[i]->output * N->weights[i];
+    }
+  sum += N->weights[i];
+
+  N->output = N->activation(sum);
+  N->z_derivative = N->output*(1-N->output);
+
+  return EXIT_SUCCESS;
+}

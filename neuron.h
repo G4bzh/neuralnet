@@ -30,5 +30,6 @@ int neuron_print(Neuron*);
 double neuron_sigmoid(double);
 int neuron_dump(int, Neuron*);
 int neuron_restore(int, Neuron*);
+int neuron_feedforward(Neuron*);
 
 #endif
