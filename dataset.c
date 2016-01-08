@@ -213,56 +213,68 @@ int dataset_shuffle(Dataset* ds)
 
 */
 
-Dataset* dataset_2Dconvolution(Dataset* orig_DS, unsigned int orig_x, unsigned int orig_y, unsigned int conv_x, unsigned int conv_y)
+Dataset* dataset_2Dconvolution(Dataset* orig_DS, unsigned int orig_rows, unsigned int orig_cols, unsigned int conv_rows, unsigned int conv_cols)
 {
   assert( orig_DS != NULL );
-  assert( conv_x );
-  assert( conv_y );
-  assert( orig_x > conv_x );
-  assert( orig_y > conv_y );
+  assert( conv_cols );
+  assert( conv_rows );
+  assert( orig_cols > conv_cols );
+  assert( orig_rows > conv_rows );
   
 
   Dataset* DS;
-  unsigned int i,j,k,n;
+  unsigned int row,col,k,u,n,x,y;
   double* a;
 
   /* Number of convolutions for 1 input */
-  n = (orig_x - conv_x - 1)*(orig_y - conv_y - 1);
+  n = (orig_rows - conv_rows + 1)*(orig_cols - conv_cols + 1);
 
-  DS = dataset_create(n*orig_DS->len,conv_x*conv_y,orig_DS->out_len);
+  DS = dataset_create(n*orig_DS->len,conv_rows*conv_cols,orig_DS->out_len);
   if (DS == NULL)
     {
       return NULL;
     }
 
-  a = (double*)malloc((conv_x*conv_y+orig_DS->out_len)*sizeof(double));
+  a = (double*)malloc((conv_rows*conv_cols+orig_DS->out_len)*sizeof(double));
   if (a == NULL)
     {
       dataset_delete(DS);
       return NULL;
     }
 
-  for(i=0;i<orig_DS->len;i++)
+  for(k=0;k<orig_DS->len;k++)
     {
-      for(j=0;j<n;j++)
+      
+      for(u=0;u<n;u++)
 	{
-	  for(k=0;k<conv_x*conv_y;k++)
-	    {
-	      a[k] = orig_DS->in[i][j+k%conv_x+orig_y*k/conv_y];
-	    }
-	  for(k=0;k<orig_DS->out_len;k++)
-	    {
-	      a[k+conv_x*conv_y] = orig_DS->out[i][k];
-	    }
+	  
+	  col = u % (orig_rows - conv_rows + 1);
+	  row = u / (orig_cols - conv_cols + 1);
 
-	  if (dataset_add(DS,a) != EXIT_SUCCESS)
+	  for(y=row;y<row+conv_cols;y++)
 	    {
-	      
+	      for(x=col;x<col+conv_cols;x++)
+		{
+		  a[(x-col)+(y-row)*conv_cols] = DS->in[k][x+y*orig_cols];
+		}
+
+	    }
+	  
+	  for(x=0;x<DS->out_len;x++)
+	    {
+	      a[conv_cols*conv_rows+x] = DS->out[k][x];
+	    }
+	  
+
+	  if ( dataset_add(DS,a) != EXIT_SUCCESS )
+	    {
 	      free(a);
 	      dataset_delete(DS);
 	      return NULL;
 	    }
+
 	}
+
     }
   
 
