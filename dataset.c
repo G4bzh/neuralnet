@@ -206,3 +206,67 @@ int dataset_shuffle(Dataset* ds)
 
   return EXIT_SUCCESS;
 }
+
+/*
+
+  Convolution
+
+*/
+
+Dataset* dataset_2Dconvolution(Dataset* orig_DS, unsigned int orig_x, unsigned int orig_y, unsigned int conv_x, unsigned int conv_y)
+{
+  assert( orig_DS != NULL );
+  assert( conv_x );
+  assert( conv_y );
+  assert( orig_x > conv_x );
+  assert( orig_y > conv_y );
+  
+
+  Dataset* DS;
+  unsigned int i,j,k,n;
+  double* a;
+
+  /* Number of convolutions for 1 input */
+  n = (orig_x - conv_x - 1)*(orig_y - conv_y - 1);
+
+  DS = dataset_create(n*orig_DS->len,conv_x*conv_y,orig_DS->out_len);
+  if (DS == NULL)
+    {
+      return NULL;
+    }
+
+  a = (double*)malloc((conv_x*conv_y+orig_DS->out_len)*sizeof(double));
+  if (a == NULL)
+    {
+      dataset_delete(DS);
+      return NULL;
+    }
+
+  for(i=0;i<orig_DS->len;i++)
+    {
+      for(j=0;j<n;j++)
+	{
+	  for(k=0;k<conv_x*conv_y;k++)
+	    {
+	      a[k] = orig_DS->in[i][j+k%conv_x+orig_y*k/conv_y];
+	    }
+	  for(k=0;k<orig_DS->out_len;k++)
+	    {
+	      a[k+conv_x*conv_y] = orig_DS->out[i][k];
+	    }
+
+	  if (dataset_add(DS,a) != EXIT_SUCCESS)
+	    {
+	      
+	      free(a);
+	      dataset_delete(DS);
+	      return NULL;
+	    }
+	}
+    }
+  
+
+  free(a);
+
+  return DS;
+}

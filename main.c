@@ -36,9 +36,21 @@ int main( int argc, char* argv[])
   DS = mnist_load("../mnist/train-images-idx3-ubyte","../mnist/train-labels-idx1-ubyte");
   if (DS == NULL)
     {
-      goto err0;
+      return EXIT_FAILURE;
     }
   printf("Done !\n");
+
+
+  DS_Test = dataset_2Dconvolution(DS,28,28,5,5);
+  if (DS_Test == NULL)
+    {
+      goto err0;
+    }
+
+  return 1;
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   printf("Loading test images...");
   fflush(stdout);
@@ -48,7 +60,6 @@ int main( int argc, char* argv[])
       goto err0;
     }
   printf("Done !\n");
-
 
 
   unsigned int layers[] = {DS->in_len,100,DS->out_len};

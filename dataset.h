@@ -25,5 +25,6 @@ int dataset_delete(Dataset*);
 int dataset_print(Dataset*);
 int dataset_add(Dataset*, double*);
 int dataset_shuffle(Dataset*);
+Dataset* dataset_2Dconvolution(Dataset*, unsigned int, unsigned int, unsigned int, unsigned int);
 
 #endif
