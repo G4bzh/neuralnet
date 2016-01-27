@@ -9,9 +9,9 @@
 #define MNIST_H
 
 #include "dataset.h"
-#include "nnet.h"
+#include "ffnnet.h"
 
 Dataset* mnist_load(char*, char*);
-int mnist_evaluate(NNet*, Dataset*);
+int mnist_evaluate(FFNNet*, Dataset*);
 
 #endif

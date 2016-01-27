@@ -27,26 +27,26 @@ typedef enum Reg
   } Reg ;
 
 
-typedef struct NNet
+typedef struct FFNNet
 {
   unsigned int n_layers;                               /* Number of layers */
   unsigned int* n_neurons;                             /* Number of neurons per layer */
   Neuron*** layers;                                    /* Per layer array of neurons */ 
   Cost cost;                                           /* Cost function */
   Reg reg;                                             /* Regularization function */
-} NNet;
+} FFNNet;
 
 
 
 
-NNet* nnet_create(Cost, Reg, unsigned int, unsigned int*);
-int nnet_delete(NNet*);
-int nnet_print(NNet*);
-int nnet_feedforward(NNet*, double*);
-int nnet_backpropagation(NNet*, double*);
-int nnet_update(NNet*, double, double);
-int nnet_minibatch(NNet*, Dataset*, unsigned int, double, double);
-int nnet_dump(NNet*, char*);
-NNet* nnet_restore(char*);
+FFNNet* ffnnet_create(Cost, Reg, unsigned int, unsigned int*);
+int ffnnet_delete(FFNNet*);
+int ffnnet_print(FFNNet*);
+int ffnnet_feedforward(FFNNet*, double*);
+int ffnnet_backpropagation(FFNNet*, double*);
+int ffnnet_update(FFNNet*, double, double);
+int ffnnet_minibatch(FFNNet*, Dataset*, unsigned int, double, double);
+int ffnnet_dump(FFNNet*, char*);
+FFNNet* ffnnet_restore(char*);
 
 #endif

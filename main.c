@@ -12,7 +12,7 @@
 #include <time.h>
 #include <assert.h>
 #include "dataset.h"
-#include "nnet.h"
+#include "ffnnet.h"
 #include "mnist.h"
 
 
@@ -21,7 +21,7 @@ int main( int argc, char* argv[])
   
   Dataset* DS;
   Dataset* DS_Test;
-  NNet* NN;
+  FFNNet* NN;
   unsigned int i,epoch;
   int e,max = 0;
   double elapsed = 0.0;
@@ -53,7 +53,7 @@ int main( int argc, char* argv[])
 
 
   unsigned int layers[] = {DS->in_len,100,DS->out_len};
-  NN = nnet_create(COST_CROSSENTROPY,REG_L2,3,layers);
+  NN = ffnnet_create(COST_CROSSENTROPY,REG_L2,3,layers);
   if (NN == NULL)
     {
       goto err1;
@@ -68,14 +68,14 @@ int main( int argc, char* argv[])
   	{
   	  goto err2;
   	}
-      nnet_minibatch(NN,DS,10,0.1,5.0);
+      ffnnet_minibatch(NN,DS,10,0.1,5.0);
            
       e = mnist_evaluate(NN,DS_Test);
       printf("epoch %d: %u/%u", i,e,DS_Test->len);
       if (e > max)
       	{
       	  max =  e;
-      	  assert(nnet_dump(NN,"dump") == EXIT_SUCCESS);
+      	  assert(ffnnet_dump(NN,"dump") == EXIT_SUCCESS);
       	  printf(" (*)");
       	}
       printf("\n");
@@ -85,14 +85,14 @@ int main( int argc, char* argv[])
   elapsed = (end_tv.tv_sec - start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.0;
   printf("Training ended (%f s.)\n",elapsed);
 
-  nnet_delete(NN);
+  ffnnet_delete(NN);
   dataset_delete(DS);
 
-  NN = nnet_restore("dump");
+  NN = ffnnet_restore("dump");
   assert(NN != NULL);
   printf("Restored : %u/%u\n",mnist_evaluate(NN,DS_Test),DS_Test->len);
   
-  nnet_delete(NN);
+  ffnnet_delete(NN);
   dataset_delete(DS_Test);
 
   return EXIT_SUCCESS;
@@ -100,7 +100,7 @@ int main( int argc, char* argv[])
 
  err2:
 
-  nnet_delete(NN);
+  ffnnet_delete(NN);
 
  err1:
   

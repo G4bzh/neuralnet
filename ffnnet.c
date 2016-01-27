@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include "neuron.h"
 #include "dataset.h"
-#include "nnet.h"
+#include "ffnnet.h"
 
 
 
@@ -24,7 +24,7 @@
 
 */
 
-double nnet_quadratic(NNet* NN, double* a, unsigned int i)
+double ffnnet_quadratic(FFNNet* NN, double* a, unsigned int i)
 {
   assert(NN != NULL);
   assert(a != NULL);
@@ -32,7 +32,7 @@ double nnet_quadratic(NNet* NN, double* a, unsigned int i)
   return  (NN->layers[NN->n_layers-1][i]->output - a[i])* NN->layers[NN->n_layers-1][i]->z_derivative;
 }
 
-double nnet_crossentropy(NNet* NN, double* a, unsigned int i)
+double ffnnet_crossentropy(FFNNet* NN, double* a, unsigned int i)
 {
   assert(NN != NULL);
   assert(a != NULL);
@@ -41,7 +41,7 @@ double nnet_crossentropy(NNet* NN, double* a, unsigned int i)
 }
 
 
-double (*costs[2])(NNet*, double*, unsigned int)= {nnet_quadratic, nnet_crossentropy};
+double (*costs[2])(FFNNet*, double*, unsigned int)= {ffnnet_quadratic, ffnnet_crossentropy};
 
 
 /*
@@ -51,12 +51,12 @@ double (*costs[2])(NNet*, double*, unsigned int)= {nnet_quadratic, nnet_crossent
  */
 
 
-double nnet_regL2(double r, double w)
+double ffnnet_regL2(double r, double w)
 {
   return r*w;
 }
 
-double nnet_regL1(double r, double w)
+double ffnnet_regL1(double r, double w)
 {
   if (w)
     {
@@ -66,12 +66,12 @@ double nnet_regL1(double r, double w)
   return 0.0;
 }
 
-double nnet_regNone(double r, double w)
+double ffnnet_regNone(double r, double w)
 {
   return 0.0;
 }
 
-double (*regs[3])(double,double) = {nnet_regNone, nnet_regL1, nnet_regL2};
+double (*regs[3])(double,double) = {ffnnet_regNone, ffnnet_regL1, ffnnet_regL2};
 
 
 
@@ -81,16 +81,16 @@ double (*regs[3])(double,double) = {nnet_regNone, nnet_regL1, nnet_regL2};
 
 */
 
-NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
+FFNNet* ffnnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
 {
-  NNet* NN;
+  FFNNet* NN;
   unsigned int i,j,k,l;
 
   /* First parameter is the number of layers */
   assert(n > 1);
   assert(a != NULL);
 
-  NN = (NNet*)malloc(sizeof(NNet));
+  NN = (FFNNet*)malloc(sizeof(FFNNet));
   if (NN == NULL)
     {
       return NULL;
@@ -172,7 +172,7 @@ NNet* nnet_create(Cost c, Reg r, unsigned int n, unsigned int* a)
 
 */
 
-int nnet_delete(NNet* NN)
+int ffnnet_delete(FFNNet* NN)
 {
   unsigned int i,j;
 
@@ -204,7 +204,7 @@ int nnet_delete(NNet* NN)
 
 */
 
-int nnet_print(NNet* NN)
+int ffnnet_print(FFNNet* NN)
 {
   unsigned int i,j,k;
 
@@ -260,7 +260,7 @@ int nnet_print(NNet* NN)
 
 */
 
-int nnet_feedforward(NNet* NN, double* in)
+int ffnnet_feedforward(FFNNet* NN, double* in)
 {
   unsigned int i,j;
 
@@ -289,7 +289,7 @@ int nnet_feedforward(NNet* NN, double* in)
 }
 
 
-int nnet_backpropagation(NNet* NN, double* out)
+int ffnnet_backpropagation(FFNNet* NN, double* out)
 {
   unsigned int i,j;
   double e;
@@ -327,7 +327,7 @@ int nnet_backpropagation(NNet* NN, double* out)
 
 */
 
-int nnet_update(NNet* NN, double l, double r)
+int ffnnet_update(FFNNet* NN, double l, double r)
 {
   unsigned int i,j;
 
@@ -353,7 +353,7 @@ int nnet_update(NNet* NN, double l, double r)
 
 */
 
-int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta, double lambda)
+int ffnnet_minibatch(FFNNet* NN, Dataset* ds, unsigned int n, double eta, double lambda)
 {
   assert( NN != NULL );
   assert( ds != NULL );
@@ -367,10 +367,10 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta, double lam
     {
       for(j=i;j<i+n;j++)
 	{
-	  assert( nnet_feedforward(NN,ds->in[j]) == EXIT_SUCCESS );
-	  assert( nnet_backpropagation(NN,ds->out[j])  == EXIT_SUCCESS );
+	  assert( ffnnet_feedforward(NN,ds->in[j]) == EXIT_SUCCESS );
+	  assert( ffnnet_backpropagation(NN,ds->out[j])  == EXIT_SUCCESS );
 	}
-      assert( nnet_update(NN, eta/(double)n, eta*lambda/(double)ds->len) == EXIT_SUCCESS );
+      assert( ffnnet_update(NN, eta/(double)n, eta*lambda/(double)ds->len) == EXIT_SUCCESS );
       i += n;
     }
   
@@ -385,7 +385,7 @@ int nnet_minibatch(NNet* NN, Dataset* ds, unsigned int n, double eta, double lam
 */
 
 
-int nnet_dump(NNet* NN, char* filename)
+int ffnnet_dump(FFNNet* NN, char* filename)
 {
   int fd;
   unsigned int i,j;
@@ -425,9 +425,9 @@ int nnet_dump(NNet* NN, char* filename)
 
 */
 
-NNet* nnet_restore(char* filename)
+FFNNet* ffnnet_restore(char* filename)
 {
-  NNet* NN;
+  FFNNet* NN;
   int fd;
   unsigned int i,j, n,c,r;
   unsigned int* a;
@@ -452,7 +452,7 @@ NNet* nnet_restore(char* filename)
 	}
     }
   
-  NN = nnet_create(c,r,n,a);
+  NN = ffnnet_create(c,r,n,a);
   if (NN == NULL)
     {
       goto err0;
@@ -476,7 +476,7 @@ NNet* nnet_restore(char* filename)
   
  err1:
   
-  nnet_delete(NN);
+  ffnnet_delete(NN);
 
  err0:
 

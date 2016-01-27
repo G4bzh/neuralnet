@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include "dataset.h"
-#include "nnet.h"
+#include "ffnnet.h"
 #include "mnist.h"
 
 
@@ -191,7 +191,7 @@ int mnist_max_array(unsigned int n, double* a)
   return max;
 }
 
-int mnist_max_nnet(NNet* NN)
+int mnist_max_ffnnet(FFNNet* NN)
 {
   int max = 0;
   unsigned int i;
@@ -217,7 +217,7 @@ int mnist_max_nnet(NNet* NN)
 
 */
 
-int mnist_evaluate(NNet* NN, Dataset * ds)
+int mnist_evaluate(FFNNet* NN, Dataset * ds)
 {
   int n=0;
   unsigned int i;
@@ -228,8 +228,8 @@ int mnist_evaluate(NNet* NN, Dataset * ds)
 
   for(i=0;i<ds->len;i++)
     {
-      assert( nnet_feedforward(NN,ds->in[i]) == EXIT_SUCCESS );
-      if ( mnist_max_nnet(NN) == mnist_max_array(ds->out_len,ds->out[i]) )
+      assert( ffnnet_feedforward(NN,ds->in[i]) == EXIT_SUCCESS );
+      if ( mnist_max_ffnnet(NN) == mnist_max_array(ds->out_len,ds->out[i]) )
 	{
 	  n++;
 	}
