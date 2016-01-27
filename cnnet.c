@@ -33,7 +33,8 @@ CVLayer* cvlayer_create(unsigned int w, unsigned int h, CNNet* parent)
  
 
   CVLayer* cv;
-  unsigned int i,j,n;
+  Neuron** p;
+  unsigned int i,j,n,col,row,x,y;
   
   cv = (CVLayer*)malloc(sizeof(CVLayer));
   if (cv == NULL)
@@ -69,21 +70,42 @@ CVLayer* cvlayer_create(unsigned int w, unsigned int h, CNNet* parent)
       goto err2;
     }
   
+  /* Helper */
+  i=0;
+  p = (Neuron**)malloc(h*w*sizeof(Neuron*));
+  if (p == NULL)
+    {
+      goto err3;
+    }
+
   for(i=0;i<n;i++)
     {
-      cv->neurons[i] = neuron_create(0,NULL,NULL);
+      col = i % (parent->in_h - h + 1);
+      row = i / (parent->in_w - w + 1);
+      
+      /* Convolutional predecessors */
+      for(y=row;y<row+w;y++)
+	{
+	  for(x=col;x<col+w;x++)
+	    {
+	      p[(x-col)+(y-row)*w] = parent->inlayer[x+y*parent->in_w];
+	    }
+	}
+
+      cv->neurons[i] = neuron_create(h*w,cv->weights,p);
       if (cv->neurons[i] == NULL)
 	{
-	  goto err3;
+	  goto err4;
 	}
     }
+
+  free(p);
   cv->n_neurons = n;
-
-
 
   return cv;
 
-
+ err4:
+  free(p);
 
  err3:
   for(j=0;j<i;j++)
