@@ -277,6 +277,7 @@ int nnet_feedforward(NNet* NN, double* in)
   /* Feed forward */
   for(i=1;i<NN->n_layers;i++)
     {
+      #pragma omp parallel for
       for(j=0;j<NN->n_neurons[i];j++)
 	{
 	  neuron_feedforward( NN->layers[i][j] );
@@ -306,6 +307,7 @@ int nnet_backpropagation(NNet* NN, double* out)
   /* Error backpropagation */
   for(i=NN->n_layers-2;i>0;i--)
     {
+      #pragma omp parallel for
       for(j=0;j<NN->n_neurons[i];j++)
 	{
 
@@ -334,6 +336,7 @@ int nnet_update(NNet* NN, double l, double r)
 
   for(i=NN->n_layers-1;i>0;i--)
     {
+      #pragma omp parallel for
       for(j=0;j<NN->n_neurons[i];j++)
 	{
 	  neuron_update(NN->layers[i][j],l,r,regs[NN->reg]);

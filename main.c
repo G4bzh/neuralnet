@@ -41,16 +41,6 @@ int main( int argc, char* argv[])
   printf("Done !\n");
 
 
-  DS_Test = dataset_2Dconvolution(DS,28,28,5,5);
-  if (DS_Test == NULL)
-    {
-      goto err0;
-    }
-
-  return 1;
-
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   printf("Loading test images...");
   fflush(stdout);

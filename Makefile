@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -lm -g
+CFLAGS = -Wall -lm -g -fopenmp
 EXEC = neuralnet
 
 all : $(EXEC)
