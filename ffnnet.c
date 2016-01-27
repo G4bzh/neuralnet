@@ -1,6 +1,6 @@
 /*
 
-  Neural Network
+  Feed Forward Neural Network
 
 */
 

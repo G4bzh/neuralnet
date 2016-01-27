@@ -1,12 +1,12 @@
 /*
   
-  Header file for neural nets
+  Header file for feed forward neural nets
 
 */
 
 
-#ifndef NNET_H
-#define NNET_H
+#ifndef FFNNET_H
+#define FFNNET_H
 
 #include "neuron.h"
 #include "dataset.h"
