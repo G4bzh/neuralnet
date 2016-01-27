@@ -78,8 +78,12 @@ CVLayer* cvlayer_create(unsigned int w, unsigned int h, CNNet* parent)
 	}
     }
   cv->n_neurons = n;
-  fflush(stdout);
+
+
+
   return cv;
+
+
 
  err3:
   for(j=0;j<i;j++)
