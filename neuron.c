@@ -143,35 +143,9 @@ int neuron_delete(Neuron* N)
 
 /*
 
-  Print
+  Dump
 
 */
-
-int neuron_print(Neuron* N)
-{
-
-  assert(N != NULL);
-
-  if (N->n_in)
-    {
-      unsigned int i;
-      printf("[");
-      for(i=0;i<N->n_in;i++)
-	{
-	  printf(" %f ", N->weights[i]);
-	}
-      /* Bias */
-      printf(" %f ", N->weights[i]);
-      printf("| %f ] ", N->output);
-      
-    }
-  else
-    {
-      printf("[ input | %f ] ", N->output);
-    }
-
-  return EXIT_SUCCESS;
-}
 
 
 int neuron_dump(int fd, Neuron* N)

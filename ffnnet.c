@@ -200,62 +200,6 @@ int ffnnet_delete(FFNNet* NN)
 
 /*
 
-  Print (Graphviz/Dot format)
-
-*/
-
-int ffnnet_print(FFNNet* NN)
-{
-  unsigned int i,j,k;
-
-  assert (NN != NULL);
-  
-  printf("digraph G {\n");
-  printf("rankdir=LR\n");
-  printf("splines=line\n");
-  printf("node [fixedsize=true, label=\"\"];\n");
-
-  for(i=0;i<NN->n_layers;i++)
-    {
-
-      printf("subgraph cluster_%u {\n",i);
-      printf("color=white;\n");
-      printf("node [style=solid,color=blue4, shape=circle];\n");
-      
-      if (NN->n_neurons[i])
-	{
-	  for(j=0;j<NN->n_neurons[i];j++)
-	    {
-	      printf("n%u%u ",i,j);
-	    }
-	  printf(";\n");
-	}
-      
-      printf("label = \"layer %u\"\n",i);
-      printf("}\n");
-      
-    }
-
-
-  for(i=0;i<NN->n_layers-1;i++)
-    {
-      for(j=0;j<NN->n_neurons[i];j++)
-	{
-	  for(k=0;k<NN->n_neurons[i+1];k++)
-	    {
-	      printf("n%u%u -> n%u%u\n",i,j,i+1,k);
-	    }
-	}
-    }
-
-  printf("}\n");
-
-  return EXIT_SUCCESS;
-}
-
-
-/*
-
   Feedforward
 
 */

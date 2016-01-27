@@ -41,7 +41,6 @@ typedef struct FFNNet
 
 FFNNet* ffnnet_create(Cost, Reg, unsigned int, unsigned int*);
 int ffnnet_delete(FFNNet*);
-int ffnnet_print(FFNNet*);
 int ffnnet_feedforward(FFNNet*, double*);
 int ffnnet_backpropagation(FFNNet*, double*);
 int ffnnet_update(FFNNet*, double, double);
