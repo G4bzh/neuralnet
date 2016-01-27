@@ -23,7 +23,10 @@ int main( int argc, char* argv[])
   CNNet* CNN;
   
 
-  CNN = cnnet_create(10,3,5,5);
+  CNN = cnnet_create(10,10,3,5,5);
+  assert(CNN != NULL);
+
+  cnnet_delete(CNN);
 
   return EXIT_FAILURE;
 

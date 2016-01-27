@@ -13,24 +13,26 @@
 
 typedef struct CVLayer
 {
-  unsigned int width;
-  unsigned int height;
-  unsigned n_weights;
+  unsigned int cv_w;
+  unsigned int cv_h;
+  unsigned int n_weights;
+  unsigned int n_neurons;
   double* weights;
-  Neuron* layer;
+  Neuron** neurons;
 } CVLayer;
 
 
 typedef struct CNNet
 {
-  unsigned int n_in;
   unsigned int n_conv;
-  Neuron* inlayer;
-  CVLayer* cvlayers;
+  unsigned int in_w;
+  unsigned int in_h;
+  Neuron** inlayer;
+  CVLayer** cvlayers;
 } CNNet;
 
 
-CNNet* cnnet_create(unsigned int, unsigned int, unsigned int, unsigned int);
+CNNet* cnnet_create(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 int cnnet_delete(CNNet*);
 
 #endif
