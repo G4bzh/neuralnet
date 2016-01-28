@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include "dataset.h"
-#include "ffnnet.h"
 #include "mnist.h"
 
 
@@ -87,7 +86,7 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
     }
 
 
-  n_i = n_l = 100; /* DEV ONLY */
+  // n_i = n_l = 100; /* DEV ONLY */
 
   if (read(fd_i,&rows,sizeof(int)) != sizeof(int))
     {
@@ -189,51 +188,4 @@ int mnist_max_array(unsigned int n, double* a)
     }
  
   return max;
-}
-
-int mnist_max_ffnnet(FFNNet* NN)
-{
-  int max = 0;
-  unsigned int i;
-  
-  assert(NN != NULL);
-  
-  for(i=1;i<NN->n_neurons[NN->n_layers-1];i++)
-    {
-
-      if (NN->layers[NN->n_layers-1][i]->output > NN->layers[NN->n_layers-1][max]->output)
-	{
-	  max = i;
-	}
-    }
-
-  return max;  
-}
-
-
-/*
-
-  Evaluate
-
-*/
-
-int mnist_evaluate(FFNNet* NN, Dataset * ds)
-{
-  int n=0;
-  unsigned int i;
-
-  assert(NN != NULL);
-  assert(ds != NULL);
-  assert(NN->n_neurons[NN->n_layers-1] == ds->out_len);
-
-  for(i=0;i<ds->len;i++)
-    {
-      assert( ffnnet_feedforward(NN,ds->in[i]) == EXIT_SUCCESS );
-      if ( mnist_max_ffnnet(NN) == mnist_max_array(ds->out_len,ds->out[i]) )
-	{
-	  n++;
-	}
-    }
-
-  return n;
 }

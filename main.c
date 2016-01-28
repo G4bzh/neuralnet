@@ -12,53 +12,28 @@
 #include <time.h>
 #include <assert.h>
 #include "dataset.h"
+#include "functions.h"
 #include "input.h"
 #include "fullconn.h"
-#include "ffnnet.h"
 #include "cnnet.h"
 #include "mnist.h"
 
 
 int main( int argc, char* argv[])
 {
-  
-
-
-  INPUT* in;
-  FULLCONN* fc01;
-  double a[] ={1.0, 1.0, 1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0, 1.0, 1.0};
-
-  in = input_create(25);
-  fc01 = fullconn_create(10,25,in->neurons);
-
-  input_feedforward(in,a);
-  fullconn_feedforward(fc01);
-  fullconn_backpropagation(fc01,NULL,NULL);
-
-  fullconn_delete(fc01);
-  input_delete(in);
-
-
-
-
-
-  return EXIT_SUCCESS;
-
-
   Dataset* DS;
   Dataset* DS_Test;
-  FFNNet* NN;
-  unsigned int i,epoch;
-  int e,max = 0;
-  double elapsed = 0.0;
-  struct timeval end_tv, start_tv;
+  unsigned int i,epoch,batch_size,run,j,k,max_test,max_out,guess;
+  INPUT* input;
+  double eta, lambda;;
+  FULLCONN* hidden;
+  FULLCONN* output;
 
   srand(time(NULL));
   epoch = 30;
+  eta = 0.1;
+  lambda = 5.0;
+  batch_size = 10;
 
 
   printf("Loading train images...");
@@ -82,59 +57,67 @@ int main( int argc, char* argv[])
   printf("Done !\n");
 
 
-  unsigned int layers[] = {DS->in_len,100,DS->out_len};
-  NN = ffnnet_create(COST_CROSSENTROPY,REG_L2,3,layers);
-  if (NN == NULL)
+  input = input_create(DS->in_len);
+  hidden = fullconn_create(100,input->n_neurons,input->neurons);
+  output = fullconn_create(10,hidden->n_neurons,hidden->neurons);
+
+  for(run=0;run<epoch;run++)
     {
-      goto err1;
+      dataset_shuffle(DS);
+      j=0;
+      while( j+batch_size < DS->len)
+	{
+	  for(i=j;i<j+batch_size;i++)
+	    {  
+	      input_feedforward(input,DS->in[i]);
+	      fullconn_feedforward(hidden);
+	      fullconn_feedforward(output);
+	      
+	      fullconn_backpropagation(output,DS->out[i],func_crossentropy);
+	      fullconn_backpropagation(hidden,NULL,NULL);
+	    }
+	  
+	  fullconn_update(hidden,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
+	  fullconn_update(output,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
+	  
+	  j+=batch_size;
+	}
+
+
+      for(i=0, guess=0 ;i<DS_Test->len;i++)
+	{
+	  input_feedforward(input,DS_Test->in[i]);
+	  fullconn_feedforward(hidden);
+	  fullconn_feedforward(output);
+
+	  max_out = 0;
+	  for(k=1;k<output->n_neurons;k++)
+	    {
+	      if (output->neurons[k]->output > output->neurons[max_out]->output)
+		{
+		  max_out = k;
+		}
+	    }
+
+	  max_test = mnist_max_array(DS_Test->out_len, DS_Test->out[i]);
+
+	  if (max_out == max_test)
+	    {
+	      guess++;
+	    }
+	}
+
+      printf("epoch %d: %u/%u\n",run,guess,DS_Test->len);
+
     }
 
-  printf("Training started\n");
-  gettimeofday(&start_tv, NULL);
-
-  for(i=0;i<epoch;i++)
-    {
-      if (dataset_shuffle(DS) != EXIT_SUCCESS)
-  	{
-  	  goto err2;
-  	}
-      ffnnet_minibatch(NN,DS,10,0.1,5.0);
-           
-      e = mnist_evaluate(NN,DS_Test);
-      printf("epoch %d: %u/%u", i,e,DS_Test->len);
-      if (e > max)
-      	{
-      	  max =  e;
-      	  assert(ffnnet_dump(NN,"dump") == EXIT_SUCCESS);
-      	  printf(" (*)");
-      	}
-      printf("\n");
-    }
-
-  gettimeofday(&end_tv, NULL);
-  elapsed = (end_tv.tv_sec - start_tv.tv_sec) + (end_tv.tv_usec - start_tv.tv_usec) / 1000000.0;
-  printf("Training ended (%f s.)\n",elapsed);
-
-  ffnnet_delete(NN);
+  fullconn_delete(output);
+  fullconn_delete(hidden);
+  input_delete(input);
   dataset_delete(DS);
-
-  NN = ffnnet_restore("dump");
-  assert(NN != NULL);
-  printf("Restored : %u/%u\n",mnist_evaluate(NN,DS_Test),DS_Test->len);
-  
-  ffnnet_delete(NN);
   dataset_delete(DS_Test);
 
   return EXIT_SUCCESS;
-
-
- err2:
-
-  ffnnet_delete(NN);
-
- err1:
-  
-   dataset_delete(DS_Test);
 
  err0:
 

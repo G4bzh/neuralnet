@@ -12,6 +12,6 @@
 #include "ffnnet.h"
 
 Dataset* mnist_load(char*, char*);
-int mnist_evaluate(FFNNet*, Dataset*);
+int mnist_max_array(unsigned int n, double* a);
 
 #endif
