@@ -25,6 +25,7 @@ int main( int argc, char* argv[])
 
 
   INPUT* in;
+  FULLCONN* fc01;
   double a[] ={1.0, 1.0, 1.0, 1.0, 1.0,
 		1.0, 1.0, 1.0, 1.0, 1.0,
 		1.0, 1.0, 1.0, 1.0, 1.0,
@@ -32,7 +33,12 @@ int main( int argc, char* argv[])
 		1.0, 1.0, 1.0, 1.0, 1.0};
 
   in = input_create(25);
+  fc01 = fullconn_create(10,25,in->neurons);
+
   input_feedforward(in,a);
+  
+
+  fullconn_delete(fc01);
   input_delete(in);
 
 

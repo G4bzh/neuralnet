@@ -19,7 +19,7 @@ typedef struct FULLCONN
 } FULLCONN;
 
 
-FULLCONN* fullconn_create(unsigned int, unsigned int);
+FULLCONN* fullconn_create(unsigned int, unsigned int, Neuron**);
 int fullconn_delete(FULLCONN*);
 
 #endif

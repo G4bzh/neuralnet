@@ -18,11 +18,52 @@
 
 */
 
-FULLCONN* fullconn_create(unsigned int prev, unsigned int n)
+FULLCONN* fullconn_create(unsigned int n_neurons, unsigned int n_prev, Neuron** prev)
 {
+  assert(n_prev);
+  assert(n_neurons);
+  assert(prev != NULL);
+
   FULLCONN* FC;
+  unsigned int i,j;
+
+  FC = (FULLCONN*)malloc(sizeof(FULLCONN));
+  if (FC == NULL)
+    {
+      return NULL;
+    }
+
+
+  FC->neurons = (Neuron**)malloc(n_neurons*sizeof(Neuron*));
+  if (FC->neurons == NULL)
+    {
+      goto err1;
+    }
+
+  for(i=0;i<n_neurons;i++)
+    {
+      FC->neurons[i] = neuron_create(n_prev,NULL,prev);
+      if (FC->neurons[i] == NULL)
+	{
+	  goto err2;
+	}
+    }
+
+  FC->n_prev = n_prev;
+  FC->n_neurons = n_neurons;
 
   return FC;
+
+ err2:
+  for(j=0;j<i;j++)
+    {
+      neuron_delete(FC->neurons[j]);
+    }
+
+ err1:
+  free(FC);
+
+  return NULL;
 
 }
 
@@ -37,10 +78,19 @@ FULLCONN* fullconn_create(unsigned int prev, unsigned int n)
 
 int fullconn_delete(FULLCONN* FC)
 {
+  unsigned int i;
+
   if (FC == NULL)
     {
       return EXIT_FAILURE;
     }
+
+  for(i=0;i<FC->n_neurons;i++)
+    {
+      neuron_delete(FC->neurons[i]);
+    }
+  
+  free(FC);
 
   return EXIT_SUCCESS;
 }
