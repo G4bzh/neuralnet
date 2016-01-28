@@ -120,3 +120,72 @@ int fullconn_feedforward(FULLCONN* FC)
         
   return EXIT_SUCCESS;
  }
+
+
+/*
+
+  Backpropagation
+
+*/
+
+int fullconn_backpropagation(FULLCONN* FC, double* out, double (*cost)(Neuron*,double))
+{
+  unsigned int i;
+
+  if (FC == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  if (out == NULL)
+    {
+
+      #pragma omp parallel for
+      for(i=0;i<FC->n_neurons;i++)
+	{
+	  neuron_backpropagation(FC->neurons[i],NULL);
+	}
+    }
+  else
+    {
+      /* Last layer case */
+      assert(out != NULL);
+      assert(cost != NULL);
+
+      double e;
+
+      for(i=0;i<FC->n_neurons;i++)
+	{
+	  e = cost(FC->neurons[i],out[i]);
+	  neuron_backpropagation(FC->neurons[i],&e);
+	}
+    }
+
+        
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  Update (gradient descent)
+
+*/
+
+int fullconn_update(FULLCONN* FC, double l, double r, double (*reg)(double,double))
+{
+  unsigned int i;
+
+  if ( (FC == NULL) || (reg == NULL) )
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<FC->n_neurons;i++)
+    {
+      neuron_update(FC->neurons[i],l,r,reg);
+    }
+
+  return EXIT_SUCCESS;
+}

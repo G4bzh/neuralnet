@@ -22,5 +22,7 @@ typedef struct FULLCONN
 FULLCONN* fullconn_create(unsigned int, unsigned int, Neuron**);
 int fullconn_delete(FULLCONN*);
 int fullconn_feedforward(FULLCONN*);
+int fullconn_backpropagation(FULLCONN*, double*, double (*cost)(Neuron*,double));
+int fullconn_update(FULLCONN*, double, double, double (*reg)(double,double));
 
 #endif

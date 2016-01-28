@@ -37,6 +37,7 @@ int main( int argc, char* argv[])
 
   input_feedforward(in,a);
   fullconn_feedforward(fc01);
+  fullconn_backpropagation(fc01,NULL,NULL);
 
   fullconn_delete(fc01);
   input_delete(in);
