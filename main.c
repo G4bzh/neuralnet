@@ -23,11 +23,19 @@ int main( int argc, char* argv[])
   CNNet* CNN;
   
 
-  CNN = cnnet_create(10,10,3,5,5);
+  double in[] ={1.0, 1.0, 1.0, 1.0, 1.0,
+		1.0, 1.0, 1.0, 1.0, 1.0,
+		1.0, 1.0, 1.0, 1.0, 1.0,
+		1.0, 1.0, 1.0, 1.0, 1.0,
+		1.0, 1.0, 1.0, 1.0, 1.0};
+
+
+  CNN = cnnet_create(5,5,3,2,2);
   assert(CNN != NULL);
+  cnnet_feedforward(CNN,in);
 
   cnnet_delete(CNN);
 
-  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 
 }

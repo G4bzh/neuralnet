@@ -34,5 +34,6 @@ typedef struct CNNet
 
 CNNet* cnnet_create(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 int cnnet_delete(CNNet*);
+int cnnet_feedforward(CNNet*, double*);
 
 #endif

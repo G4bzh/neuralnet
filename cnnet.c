@@ -156,6 +156,20 @@ int cvlayer_delete(CVLayer* cv)
 
 /*
 
+  CVLayer FeedForward
+
+*/
+
+
+int cvlayer_feedforward(CVLayer* CV)
+{
+  return EXIT_SUCCESS;
+}
+
+
+
+/*
+
   Creation
 
 */
@@ -273,6 +287,39 @@ int cnnet_delete(CNNet* CNN)
 
   free(CNN->inlayer);
   free(CNN);
+
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  FeedForward
+
+*/
+
+
+int cnnet_feedforward(CNNet* CNN, double* in)
+{
+  assert(CNN != NULL);
+  assert(in != NULL);
+
+  unsigned int i;
+
+  /* Set input as inlayer neurons output */
+  for(i=0;i<CNN->in_w*CNN->in_h;i++)
+    {
+      CNN->inlayer[i]->output = in[i];
+    }
+
+  /* FeedForward for each feature maps */
+  for(i=0;i<CNN->n_conv;i++)
+    {
+      if (cvlayer_feedforward(CNN->cvlayers[i]) != EXIT_SUCCESS)
+	{
+	  return EXIT_FAILURE;
+	}
+    }
 
   return EXIT_SUCCESS;
 }
