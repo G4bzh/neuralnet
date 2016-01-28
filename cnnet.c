@@ -163,6 +163,17 @@ int cvlayer_delete(CVLayer* cv)
 
 int cvlayer_feedforward(CVLayer* CV)
 {
+  assert(CV != NULL);
+
+  unsigned int i;
+
+  /* Feed forward */
+  #pragma omp parallel for
+  for(i=0;i<CV->n_neurons;i++)
+    {
+      neuron_feedforward( CV->neurons[i] );
+    }
+
   return EXIT_SUCCESS;
 }
 
