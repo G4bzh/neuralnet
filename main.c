@@ -36,7 +36,7 @@ int main( int argc, char* argv[])
   fc01 = fullconn_create(10,25,in->neurons);
 
   input_feedforward(in,a);
-  
+  fullconn_feedforward(fc01);
 
   fullconn_delete(fc01);
   input_delete(in);

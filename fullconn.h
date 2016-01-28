@@ -21,5 +21,6 @@ typedef struct FULLCONN
 
 FULLCONN* fullconn_create(unsigned int, unsigned int, Neuron**);
 int fullconn_delete(FULLCONN*);
+int fullconn_feedforward(FULLCONN*);
 
 #endif

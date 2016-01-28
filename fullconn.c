@@ -94,3 +94,29 @@ int fullconn_delete(FULLCONN* FC)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  FeedForward
+
+*/
+
+
+int fullconn_feedforward(FULLCONN* FC)
+{
+  unsigned int i;
+
+  if (FC == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<FC->n_neurons;i++)
+    {
+      neuron_feedforward(FC->neurons[i]);
+    }
+        
+  return EXIT_SUCCESS;
+ }
