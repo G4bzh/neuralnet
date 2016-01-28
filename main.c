@@ -6,16 +6,13 @@
 
 
 #include <stdlib.h>
-#include <stdarg.h>
 #include <stdio.h>
-#include <sys/time.h>  
 #include <time.h>
 #include <assert.h>
 #include "dataset.h"
 #include "functions.h"
 #include "input.h"
 #include "fullconn.h"
-#include "cnnet.h"
 #include "mnist.h"
 
 
