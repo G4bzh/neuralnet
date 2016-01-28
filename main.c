@@ -13,6 +13,7 @@
 #include <assert.h>
 #include "dataset.h"
 #include "input.h"
+#include "fullconn.h"
 #include "ffnnet.h"
 #include "cnnet.h"
 #include "mnist.h"
@@ -31,7 +32,7 @@ int main( int argc, char* argv[])
 		1.0, 1.0, 1.0, 1.0, 1.0};
 
   in = input_create(25);
-  input_init(in,a);
+  input_feedforward(in,a);
   input_delete(in);
 
 

@@ -18,9 +18,9 @@ typedef struct INPUT
 } INPUT;
 
 
-INPUT* input_create(unsigned int i);
+INPUT* input_create(unsigned int);
 int input_delete(INPUT*);
-int input_init(INPUT*, double*);
+int input_feedforward(INPUT*, double*);
 
 
 #endif

@@ -92,11 +92,11 @@ int input_delete(INPUT* in)
 
 /*
 
-  Initialization
+  FeedForward (initialization in fact)
 
 */
 
-int input_init(INPUT* in, double* a)
+int input_feedforward(INPUT* in, double* a)
 {
   assert(in != NULL);
   assert(a != NULL);
