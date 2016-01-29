@@ -10,20 +10,8 @@
 #include <math.h>
 #include <assert.h>
 #include <unistd.h>
+#include "functions.h"
 #include "neuron.h"
-
-
-/*
-
-  Sigmoid
-
-*/
-
-double neuron_sigmoid(double x)
-{
-  return (1/(1+exp(-x)));
-}
-
 
 /* 
 
@@ -102,7 +90,8 @@ Neuron* neuron_create(unsigned int n, double* a, Neuron** p)
     }
  
   N-> n_in = n;  
-  N->activation = neuron_sigmoid;
+  N->activation = func_sigmoid;
+  N->activation_prime = func_sigmoid_prime;
   N->output = 0;
   N->z_derivative = 0;
   N->error = 0;
@@ -223,7 +212,7 @@ inline int neuron_feedforward(Neuron* N)
   sum += N->weights[i];
 
   N->output = N->activation(sum);
-  N->z_derivative = N->output*(1-N->output);
+  N->z_derivative = N->activation_prime(sum);
   N->error = 0;
 
   return EXIT_SUCCESS;

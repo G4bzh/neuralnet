@@ -11,15 +11,16 @@
 
 typedef struct Neuron
 {
-  unsigned int n_in;              /* Number of inputs */
-  double* weights;                /* Input weights */
-  struct Neuron** prevs;          /* Previous neurons */
-  double (*activation)(double);   /* Activation function */
-  double output;                  /* Neuron output */
-  double z_derivative;            /* Activation Derivative applied to weighted inputs */
-  double error;                   /* Quadratic error */
-  double* acc_grad_w;             /* Weight gradient accumulator */
-  double acc_grad_b;              /* Bias gradient accumulator */
+  unsigned int n_in;                   /* Number of inputs */
+  double* weights;                     /* Input weights */
+  struct Neuron** prevs;               /* Previous neurons */
+  double (*activation)(double);        /* Activation function */
+  double (*activation_prime)(double);  /* Activation function */
+  double output;                       /* Neuron output */
+  double z_derivative;                 /* Activation Derivative applied to weighted inputs */
+  double error;                        /* Quadratic error */
+  double* acc_grad_w;                  /* Weight gradient accumulator */
+  double acc_grad_b;                   /* Bias gradient accumulator */
 } Neuron;
 
 

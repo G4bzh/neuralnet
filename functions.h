@@ -11,12 +11,15 @@
 
 #include "neuron.h"
 
-double func_sigmoid(double);
-double func_quadratic(Neuron*, double);
-double func_crossentropy(Neuron*, double);
-double func_regNone(double, double);
-double func_regL1(double, double);
-double func_regL2(double, double );
+inline double func_sigmoid(double);
+inline double func_sigmoid_prime(double);
+inline double func_tanh(double);
+inline double func_tanh_prime(double);
+inline double func_quadratic(Neuron*, double);
+inline double func_crossentropy(Neuron*, double);
+inline double func_regNone(double, double);
+inline double func_regL1(double, double);
+inline double func_regL2(double, double );
 
 
 #endif
