@@ -20,6 +20,36 @@
 int main( int argc, char* argv[])
 {
 
+  CONVOL* cv;
+  INPUT* inp;
+  double in[] = { 0, 1, 2, 3, 4,
+		  5, 6, 7, 8, 9, 
+		  10, 11, 12, 13, 14,
+		  15, 16, 17, 18, 19,
+		  20, 21, 22, 23, 24 };
+
+
+  unsigned int u,v;
+ 
+  inp = input_create(25);
+  cv = convol_create(5,5,2,3,inp->neurons);
+
+  input_feedforward(inp,in);
+
+  for(u=0;u<cv->n_neurons;u++)
+    {
+      for(v=0;v<cv->n_weights;v++)
+	{
+	  printf("%f ", cv->neurons[u]->prevs[v]->output);
+	}
+      printf("\n");
+    }
+
+  convol_delete(cv);
+  input_delete(inp);
+
+  return 0;
+
   Dataset* DS;
   Dataset* DS_Test;
   unsigned int i,epoch,batch_size,run,j,k,max_test,max_out,guess;
@@ -27,7 +57,7 @@ int main( int argc, char* argv[])
   double eta, lambda;;
   FULLCONN* hidden;
   FULLCONN* output;
-  CONVOL* cv;
+
 
   srand(time(NULL));
   epoch = 30;
@@ -58,7 +88,7 @@ int main( int argc, char* argv[])
 
 
   input = input_create(DS->in_len);
-  cv = convol_create(28,28,5,5,input->neurons);
+
   hidden = fullconn_create(100,input->n_neurons,input->neurons);
   output = fullconn_create(10,hidden->n_neurons,hidden->neurons);
 
@@ -117,7 +147,6 @@ int main( int argc, char* argv[])
 
   fullconn_delete(output);
   fullconn_delete(hidden);
-  convol_delete(cv);
   input_delete(input);
   dataset_delete(DS);
   dataset_delete(DS_Test);
