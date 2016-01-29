@@ -28,22 +28,14 @@ int main( int argc, char* argv[])
 		  15, 16, 17, 18, 19,
 		  20, 21, 22, 23, 24 };
 
-
-  unsigned int u,v;
  
   inp = input_create(25);
   cv = convol_create(5,5,2,3,inp->neurons);
 
   input_feedforward(inp,in);
+  convol_feedforward(cv);
 
-  for(u=0;u<cv->n_neurons;u++)
-    {
-      for(v=0;v<cv->n_weights;v++)
-	{
-	  printf("%f ", cv->neurons[u]->prevs[v]->output);
-	}
-      printf("\n");
-    }
+  convol_backpropagation(cv);
 
   convol_delete(cv);
   input_delete(inp);

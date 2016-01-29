@@ -153,3 +153,53 @@ int convol_delete(CONVOL* cv)
   return EXIT_SUCCESS;
 
 }
+
+
+/*
+
+  Feedforward
+
+*/
+
+int convol_feedforward(CONVOL* cv)
+{
+  unsigned int i;
+
+  if (cv == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<cv->n_neurons;i++)
+    {
+      neuron_feedforward(cv->neurons[i]);
+    }
+        
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  Backpropagation
+
+*/
+
+int convol_backpropagation(CONVOL* cv)
+{
+  unsigned int i;
+
+  if (cv == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<cv->n_neurons;i++)
+    {
+      neuron_backpropagation(cv->neurons[i],NULL);
+    }
+
+  return EXIT_SUCCESS;
+}
