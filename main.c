@@ -62,6 +62,8 @@ int main( int argc, char* argv[])
     {
       dataset_shuffle(DS);
       j=0;
+
+      /* Mini batch */
       while( j+batch_size < DS->len)
 	{
 	  for(i=j;i<j+batch_size;i++)
@@ -80,6 +82,7 @@ int main( int argc, char* argv[])
 	  j+=batch_size;
 	}
 
+      /* Validation */
 
       for(i=0, guess=0 ;i<DS_Test->len;i++)
 	{
