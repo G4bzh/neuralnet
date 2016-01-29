@@ -55,6 +55,7 @@ FULLCONN* fullconn_create(unsigned int n_neurons, unsigned int n_prev, Neuron** 
   return FC;
 
  err2:
+  #pragma omp parallel for
   for(j=0;j<i;j++)
     {
       neuron_delete(FC->neurons[j]);
@@ -85,6 +86,7 @@ int fullconn_delete(FULLCONN* FC)
       return EXIT_FAILURE;
     }
 
+  #pragma omp parallel for
   for(i=0;i<FC->n_neurons;i++)
     {
       neuron_delete(FC->neurons[i]);
@@ -154,6 +156,7 @@ int fullconn_backpropagation(FULLCONN* FC, double* out, double (*cost)(Neuron*,d
 
       double e;
 
+      #pragma omp parallel for
       for(i=0;i<FC->n_neurons;i++)
 	{
 	  e = cost(FC->neurons[i],out[i]);
