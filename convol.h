@@ -27,5 +27,6 @@ CONVOL* convol_create(unsigned int, unsigned int, unsigned int, unsigned int, Ne
 int convol_delete(CONVOL*);
 int convol_feedforward(CONVOL*);
 int convol_backpropagation(CONVOL*);
+int convol_update(CONVOL*, double, double, double (*reg)(double,double));
 
 #endif

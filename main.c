@@ -20,33 +20,12 @@
 int main( int argc, char* argv[])
 {
 
-  CONVOL* cv;
-  INPUT* inp;
-  double in[] = { 0, 1, 2, 3, 4,
-		  5, 6, 7, 8, 9, 
-		  10, 11, 12, 13, 14,
-		  15, 16, 17, 18, 19,
-		  20, 21, 22, 23, 24 };
-
- 
-  inp = input_create(25);
-  cv = convol_create(5,5,2,3,inp->neurons);
-
-  input_feedforward(inp,in);
-  convol_feedforward(cv);
-
-  convol_backpropagation(cv);
-
-  convol_delete(cv);
-  input_delete(inp);
-
-  return 0;
-
   Dataset* DS;
   Dataset* DS_Test;
   unsigned int i,epoch,batch_size,run,j,k,max_test,max_out,guess;
   INPUT* input;
-  double eta, lambda;;
+  double eta, lambda;
+  CONVOL* cv;
   FULLCONN* hidden;
   FULLCONN* output;
 
@@ -80,8 +59,8 @@ int main( int argc, char* argv[])
 
 
   input = input_create(DS->in_len);
-
-  hidden = fullconn_create(100,input->n_neurons,input->neurons);
+  cv = convol_create(28,28,5,5,input->neurons);
+  hidden = fullconn_create(100,cv->n_neurons,cv->neurons);
   output = fullconn_create(10,hidden->n_neurons,hidden->neurons);
 
   for(run=0;run<epoch;run++)
@@ -95,13 +74,16 @@ int main( int argc, char* argv[])
 	  for(i=j;i<j+batch_size;i++)
 	    {  
 	      input_feedforward(input,DS->in[i]);
+	      convol_feedforward(cv);
 	      fullconn_feedforward(hidden);
 	      fullconn_feedforward(output);
 	      
 	      fullconn_backpropagation(output,DS->out[i],func_crossentropy);
 	      fullconn_backpropagation(hidden,NULL,NULL);
+	      convol_backpropagation(cv);
 	    }
 	  
+	  convol_update(cv,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
 	  fullconn_update(hidden,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
 	  fullconn_update(output,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
 	  
@@ -113,6 +95,7 @@ int main( int argc, char* argv[])
       for(i=0, guess=0 ;i<DS_Test->len;i++)
 	{
 	  input_feedforward(input,DS_Test->in[i]);
+	  convol_feedforward(cv);
 	  fullconn_feedforward(hidden);
 	  fullconn_feedforward(output);
 
@@ -138,6 +121,7 @@ int main( int argc, char* argv[])
     }
 
   fullconn_delete(output);
+  convol_delete(cv);
   fullconn_delete(hidden);
   input_delete(input);
   dataset_delete(DS);

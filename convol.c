@@ -203,3 +203,49 @@ int convol_backpropagation(CONVOL* cv)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Update
+
+*/
+
+int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
+{
+  unsigned int i,j;
+  double sum;
+
+  if ( (cv == NULL) || (reg == NULL) )
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<cv->n_neurons;i++)
+    {
+      neuron_update(cv->neurons[i],l,r,reg);
+    }
+
+  /* Merge weights and bias */
+  for(i=0;i<cv->n_weights+1;i++)
+    {
+      sum = 0;
+      for(j=0;j<cv->n_neurons;j++)
+	{
+	  sum += cv->neurons[j]->weights[i] - cv->weights[i];
+	}
+      cv->weights[i] -= sum ;
+    }
+
+  /* Reset neurons shared weights and biases */
+  for(i=0;i<cv->n_weights+1;i++)
+    {
+      for(j=0;j<cv->n_neurons;j++)
+	{
+	  cv->neurons[j]->weights[i] = cv->weights[i] ;
+	}
+    }
+
+  return EXIT_SUCCESS;
+}
