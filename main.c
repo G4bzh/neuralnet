@@ -13,11 +13,13 @@
 #include "functions.h"
 #include "input.h"
 #include "fullconn.h"
+#include "convol.h"
 #include "mnist.h"
 
 
 int main( int argc, char* argv[])
 {
+
   Dataset* DS;
   Dataset* DS_Test;
   unsigned int i,epoch,batch_size,run,j,k,max_test,max_out,guess;
@@ -25,6 +27,7 @@ int main( int argc, char* argv[])
   double eta, lambda;;
   FULLCONN* hidden;
   FULLCONN* output;
+  CONVOL* cv;
 
   srand(time(NULL));
   epoch = 30;
@@ -55,6 +58,7 @@ int main( int argc, char* argv[])
 
 
   input = input_create(DS->in_len);
+  cv = convol_create(28,28,5,5,input->neurons);
   hidden = fullconn_create(100,input->n_neurons,input->neurons);
   output = fullconn_create(10,hidden->n_neurons,hidden->neurons);
 
@@ -113,6 +117,7 @@ int main( int argc, char* argv[])
 
   fullconn_delete(output);
   fullconn_delete(hidden);
+  convol_delete(cv);
   input_delete(input);
   dataset_delete(DS);
   dataset_delete(DS_Test);

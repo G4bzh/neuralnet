@@ -4,12 +4,14 @@ EXEC = neuralnet
 
 all : $(EXEC)
 
-neuralnet: main.o neuron.o dataset.o mnist.o input.o fullconn.o functions.o
+neuralnet: main.o neuron.o dataset.o mnist.o input.o fullconn.o functions.o convol.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-main.o: main.c neuron.h dataset.h mnist.h input.h fullconn.h functions.h
+main.o: main.c neuron.h dataset.h mnist.h input.h fullconn.h functions.h convol.h
 
 mnist.o : mnist.c mnist.h dataset.h
+
+convol.o : convol.c convol.h neuron.h
 
 fullconn.o : fullconn.c fullconn.h neuron.h
 
