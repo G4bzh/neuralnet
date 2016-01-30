@@ -6,6 +6,8 @@
 
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 #include "neuron.h"
 #include "maxpool.h"
 
@@ -16,9 +18,20 @@
 
 */
 
-MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_x, unsigned int pool_w,  Neuron** in)
+MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_w, unsigned int pool_h,  Neuron** in)
 {
+  assert(in_w);
+  assert(in_h);
+  assert(pool_w);
+  assert(pool_h);
+  assert(in != NULL);
+  assert(!(in_w % pool_w));
+  assert(!(in_h % pool_h));
+  
+
   MAXPOOL* mp;
+  Neuron** p;
+  unsigned int i,j,k,u,v;
 
   mp = (MAXPOOL*)malloc(sizeof(MAXPOOL));
   if (mp == NULL)
@@ -26,13 +39,72 @@ MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_
       return NULL;
     }
 
-  mp->neurons = (Neuron**)malloc(sizeof(Neuron*));
+  mp->n_neurons = (in_w/pool_w)*(in_h/pool_h);
+  
+  mp->neurons = (Neuron**)malloc(mp->n_neurons*sizeof(Neuron*));
   if (mp->neurons == NULL)
     {
       goto err1;
     }
 
+  mp->maxima = (unsigned int*)malloc(mp->n_neurons*sizeof(unsigned int));
+  if (mp->maxima == NULL)
+    {
+      goto err2;
+    }
+
+  /* Helper */
+  p = (Neuron**)malloc(pool_w*pool_h*sizeof(Neuron*));
+  if (p == NULL)
+    {
+      goto err3;
+    }
+
+  k=0;
+  for(j=0;j<in_h;j+=pool_h)
+    {
+      for(i=0;i<in_w;i+=pool_w)
+	{
+	  for(v=0;v<pool_h;v++)
+	    {
+	      for(u=0;u<pool_w;u++)
+		{
+		  
+		  p[v*pool_w+u] = in[(j+v)*in_w+(i+u)];
+		}
+	    }
+	  mp->neurons[k] = neuron_create(pool_w*pool_h,ACT_NONE,NULL,p);
+	  if(mp->neurons[k] == NULL)
+	    {
+	      goto err4;
+	    }
+	  mp->maxima[k] = 0;
+	  
+	  k++;
+	}
+    }
+
+  free(p);
+
+  mp->in_w = in_w;
+  mp->in_h = in_h;
+  mp->pool_w = pool_w;
+  mp->pool_h = pool_h;
+
   return mp;
+
+ err4:
+  for(i=0;i<k;i++)
+    {
+      neuron_delete(mp->neurons[i]);
+    }
+  free(p);
+
+ err3:
+  free(mp->maxima);
+
+ err2:
+  free(mp->neurons);
 
  err1:
   free(mp);
@@ -49,11 +121,20 @@ MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_
 
 int maxpool_delete(MAXPOOL* mp)
 {
+  unsigned int i;
+
   if (mp == NULL)
     {
       return EXIT_FAILURE;
     }
 
+  for(i=0;i<mp->n_neurons;i++)
+    {
+      neuron_delete(mp->neurons[i]);
+    }
+  
+  free(mp->maxima);
+  free(mp->neurons);
   free(mp);
 
   return EXIT_SUCCESS;
