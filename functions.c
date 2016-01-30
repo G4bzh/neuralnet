@@ -62,6 +62,29 @@ inline double func_tanh_prime(double x)
 
 /*
 
+  Identity
+
+*/
+
+inline double func_identity(double x)
+{
+  return x;
+}
+
+/*
+  
+  Identity Prime
+
+*/
+
+inline double func_identity_prime(double x)
+{
+  return 1.0;
+}
+
+
+/*
+
   Quadratic cost
 
 */

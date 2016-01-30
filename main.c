@@ -14,11 +14,41 @@
 #include "input.h"
 #include "fullconn.h"
 #include "convol.h"
+#include "maxpool.h"
 #include "mnist.h"
 
 
 int main( int argc, char* argv[])
 {
+
+
+  INPUT* inp;
+  MAXPOOL* mp;
+  double in[] = { 0, 1, 2, 3, 
+		  5, 6, 7, 8,  
+		  10, 11, 12, 13, 
+		  15, 16, 17, 18  };
+
+
+  unsigned int u;
+ 
+  inp = input_create(16);
+  mp = maxpool_create(4,4,2,2,inp->neurons);
+
+  input_feedforward(inp,in);
+
+  for(u=0;u<inp->n_neurons;u++)
+    {
+      printf("%f ", inp->neurons[u]->output);
+    }
+
+
+  maxpool_delete(mp);
+  input_delete(inp);
+
+  return 0;
+
+
 
   Dataset* DS;
   Dataset* DS_Test;
