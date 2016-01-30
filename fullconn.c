@@ -18,7 +18,7 @@
 
 */
 
-FULLCONN* fullconn_create(unsigned int n_neurons, unsigned int n_prev, Neuron** prev)
+FULLCONN* fullconn_create(unsigned int n_neurons, ACTIVATION act, unsigned int n_prev, Neuron** prev)
 {
   assert(n_prev);
   assert(n_neurons);
@@ -42,7 +42,7 @@ FULLCONN* fullconn_create(unsigned int n_neurons, unsigned int n_prev, Neuron** 
 
   for(i=0;i<n_neurons;i++)
     {
-      FC->neurons[i] = neuron_create(n_prev,NULL,prev);
+      FC->neurons[i] = neuron_create(n_prev,act,NULL,prev);
       if (FC->neurons[i] == NULL)
 	{
 	  goto err2;

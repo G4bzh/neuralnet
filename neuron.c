@@ -21,7 +21,7 @@
 
 
 
-Neuron* neuron_create(unsigned int n, double* a, Neuron** p)
+Neuron* neuron_create(unsigned int n, ACTIVATION act, double* a, Neuron** p)
 {
   Neuron* N;
   unsigned int i;
@@ -89,9 +89,22 @@ Neuron* neuron_create(unsigned int n, double* a, Neuron** p)
       
     }
  
+  switch(act)
+    {
+    case ACT_TANH:
+      {
+	N->activation = func_tanh;
+	N->activation_prime = func_tanh_prime;
+      }
+    case ACT_SIGMOID:
+    default:
+      {
+	N->activation = func_sigmoid;
+	N->activation_prime = func_sigmoid_prime;
+      }
+    }
+  
   N-> n_in = n;  
-  N->activation = func_sigmoid;
-  N->activation_prime = func_sigmoid_prime;
   N->output = 0;
   N->z_derivative = 0;
   N->error = 0;

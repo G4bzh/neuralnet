@@ -17,7 +17,7 @@
 
 */
 
-CONVOL* convol_create(unsigned int in_w, unsigned int in_h, unsigned int cv_w, unsigned int cv_h, Neuron** in)
+CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsigned int cv_w, unsigned int cv_h, Neuron** in)
 {
   assert(in_w);
   assert(in_h);
@@ -87,7 +87,7 @@ CONVOL* convol_create(unsigned int in_w, unsigned int in_h, unsigned int cv_w, u
 	    }
 	}
 
-      cv->neurons[i] = neuron_create(cv->n_weights,cv->weights,p);
+      cv->neurons[i] = neuron_create(cv->n_weights,act,cv->weights,p);
       if (cv->neurons[i] == NULL)
 	{
 	  goto err4;

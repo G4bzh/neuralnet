@@ -9,6 +9,14 @@
 #define NEURON_H
 
 
+typedef enum ACTIVATION
+  {
+    ACT_NONE,
+    ACT_SIGMOID,
+    ACT_TANH,
+  } ACTIVATION;
+
+
 typedef struct Neuron
 {
   unsigned int n_in;                   /* Number of inputs */
@@ -25,7 +33,7 @@ typedef struct Neuron
 
 
 
-Neuron* neuron_create(unsigned int, double*, Neuron**);
+Neuron* neuron_create(unsigned int, ACTIVATION, double*, Neuron**);
 int neuron_delete(Neuron*);
 int neuron_print(Neuron*);
 double neuron_sigmoid(double);

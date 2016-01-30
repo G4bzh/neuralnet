@@ -59,9 +59,9 @@ int main( int argc, char* argv[])
 
 
   input = input_create(DS->in_len);
-  cv = convol_create(28,28,5,5,input->neurons);
-  hidden = fullconn_create(100,cv->n_neurons,cv->neurons);
-  output = fullconn_create(10,hidden->n_neurons,hidden->neurons);
+  cv = convol_create(ACT_SIGMOID,28,28,5,5,input->neurons);
+  hidden = fullconn_create(100,ACT_SIGMOID,cv->n_neurons,cv->neurons);
+  output = fullconn_create(10,ACT_SIGMOID,hidden->n_neurons,hidden->neurons);
 
   for(run=0;run<epoch;run++)
     {

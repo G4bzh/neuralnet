@@ -39,7 +39,7 @@ INPUT* input_create(unsigned int i)
 
   for(j=0;j<i;j++)
     {
-      in->neurons[j] = neuron_create(0,NULL,NULL);
+      in->neurons[j] = neuron_create(0,ACT_NONE,NULL,NULL);
       if (in->neurons[j] == NULL)
 	{
 	  goto err2;
