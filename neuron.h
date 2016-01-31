@@ -43,5 +43,6 @@ int neuron_restore(int, Neuron*);
 inline int neuron_feedforward(Neuron*);
 inline int neuron_backpropagation(Neuron*, double*);
 inline int neuron_update(Neuron*, double, double, double (*reg)(double,double));
+inline int neuron_maxprev(Neuron*);
 
 #endif

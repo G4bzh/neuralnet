@@ -47,17 +47,11 @@ MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_
       goto err1;
     }
 
-  mp->maxima = (unsigned int*)malloc(mp->n_neurons*sizeof(unsigned int));
-  if (mp->maxima == NULL)
-    {
-      goto err2;
-    }
-
   /* Helper */
   p = (Neuron**)malloc(pool_w*pool_h*sizeof(Neuron*));
   if (p == NULL)
     {
-      goto err3;
+      goto err2;
     }
 
   k=0;
@@ -76,9 +70,8 @@ MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_
 	  mp->neurons[k] = neuron_create(pool_w*pool_h,ACT_NONE,NULL,p);
 	  if(mp->neurons[k] == NULL)
 	    {
-	      goto err4;
+	      goto err3;
 	    }
-	  mp->maxima[k] = 0;
 	  
 	  k++;
 	}
@@ -93,15 +86,12 @@ MAXPOOL* maxpool_create(unsigned int in_w, unsigned int in_h, unsigned int pool_
 
   return mp;
 
- err4:
+ err3:
   for(i=0;i<k;i++)
     {
       neuron_delete(mp->neurons[i]);
     }
   free(p);
-
- err3:
-  free(mp->maxima);
 
  err2:
   free(mp->neurons);
@@ -133,9 +123,34 @@ int maxpool_delete(MAXPOOL* mp)
       neuron_delete(mp->neurons[i]);
     }
   
-  free(mp->maxima);
   free(mp->neurons);
   free(mp);
+
+  return EXIT_SUCCESS;
+
+}
+
+
+/*
+
+  Feedforward
+ 
+*/
+
+int maxpool_feedforward(MAXPOOL* mp)
+{
+  unsigned int i;
+
+  if (mp == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<mp->n_neurons;i++)
+    {
+      neuron_maxprev(mp->neurons[i]);
+    }
 
   return EXIT_SUCCESS;
 

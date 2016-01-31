@@ -298,3 +298,37 @@ inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,dou
   
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Maximum Predecessor
+
+*/
+
+inline int neuron_maxprev(Neuron* N)
+{
+  assert(N!=NULL);
+  assert(N->n_in);
+  unsigned int i_max,i;
+
+  i_max=0;
+ 
+  for(i=1;i<N->n_in;i++)
+    {
+      if (N->prevs[i]->output > N->prevs[i_max]->output)
+	{
+	  i_max = i;
+	}
+    }
+
+  /* Store max index in weights[0] */
+  N->weights[0] = (double)i_max;
+
+  /* Store max predecessor value as output */
+  N->output = N->prevs[i_max]->output;
+
+
+  return EXIT_SUCCESS;
+ 
+}

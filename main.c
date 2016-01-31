@@ -28,21 +28,20 @@ int main( int argc, char* argv[])
 		  5, 6, 7, 8,  
 		  10, 11, 12, 13, 
 		  15, 16, 17, 18  };
-  unsigned int u,v;
+  unsigned int u;
 
   
   inp = input_create(16);
   mp = maxpool_create(4,4,2,2,inp->neurons);
 
   input_feedforward(inp,in);
+  maxpool_feedforward(mp);
 
   for(u=0;u<mp->n_neurons;u++)
     {
-      for(v=0;v<mp->neurons[u]->n_in;v++)
-	{
-	  printf("%f ",mp->neurons[u]->prevs[v]->output);
-	}
-      printf("\n");
+     
+      printf("(%f,%u) ",mp->neurons[u]->output,(unsigned int)mp->neurons[u]->weights[0]);
+
     }
 
   maxpool_delete(mp);
