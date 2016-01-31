@@ -24,5 +24,6 @@ typedef struct MAXPOOL
 MAXPOOL* maxpool_create(unsigned int, unsigned int, unsigned int, unsigned int,  Neuron**);
 int maxpool_delete(MAXPOOL*);
 int maxpool_feedforward(MAXPOOL*);
+int maxpool_backpropagation(MAXPOOL*);
 
 #endif

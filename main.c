@@ -36,11 +36,12 @@ int main( int argc, char* argv[])
 
   input_feedforward(inp,in);
   maxpool_feedforward(mp);
+  maxpool_backpropagation(mp);
 
   for(u=0;u<mp->n_neurons;u++)
     {
      
-      printf("(%f,%u) ",mp->neurons[u]->output,(unsigned int)mp->neurons[u]->weights[0]);
+      printf("%f ",mp->neurons[(unsigned int)mp->neurons[u]->weights[0]]->error);
 
     }
 

@@ -155,3 +155,29 @@ int maxpool_feedforward(MAXPOOL* mp)
   return EXIT_SUCCESS;
 
 }
+
+
+/*
+
+  Backpropagation
+
+*/
+
+int maxpool_backpropagation(MAXPOOL* mp)
+{
+  unsigned int i;
+
+  if (mp == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<mp->n_neurons;i++)
+    {
+      /* Copy error to max predecessor */
+      mp->neurons[i]->prevs[(unsigned int)(mp->neurons[i]->weights[0])]->error = mp->neurons[i]->error;
+    }
+  
+  return EXIT_SUCCESS;
+}
