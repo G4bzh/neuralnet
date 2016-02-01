@@ -86,7 +86,7 @@ Dataset* mnist_load(char* filename_i, char* filename_l)
     }
 
 
-  n_i = n_l = 100; /* DEV ONLY */
+  // n_i = n_l = 100; /* DEV ONLY */
 
   if (read(fd_i,&rows,sizeof(int)) != sizeof(int))
     {
