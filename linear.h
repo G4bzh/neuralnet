@@ -19,6 +19,7 @@ typedef struct LINEAR
 
 LINEAR* linear_create(unsigned int,unsigned int, Neuron** in[]);
 int linear_delete(LINEAR*);
-
+int linear_feedforward(LINEAR*);
+int linear_backpropagation(LINEAR*);
 
 #endif

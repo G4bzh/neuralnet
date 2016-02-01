@@ -40,13 +40,11 @@ LINEAR* linear_create(unsigned int depth, unsigned int n_in, Neuron** in[])
       goto err1;
     }
 
-  return l;
-
   j=0;
   for(i=0;i<n;i++)
     {
       l->neurons[i] = neuron_create(1,ACT_NONE,NULL,&(in[i/n_in][i%n_in]));
-      if(l->neurons[i] == NULL);
+      if(l->neurons[i] == NULL)
 	{
 	  goto err2;
 	}
@@ -94,3 +92,57 @@ int linear_delete(LINEAR* l)
 
   return EXIT_SUCCESS;
 }
+
+
+/*
+
+  Feeforward
+
+*/
+
+
+int linear_feedforward(LINEAR* l)
+{
+  unsigned int i;
+
+  if (l == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<l->n_neurons;i++)
+    {
+      l->neurons[i]->output =  l->neurons[i]->prevs[0]->output;
+    }
+
+  return EXIT_SUCCESS;
+
+}
+
+
+/*
+
+  Backpropagation
+
+*/
+
+int linear_backpropagation(LINEAR* l)
+{
+  unsigned int i;
+
+  if (l == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  #pragma omp parallel for
+  for(i=0;i<l->n_neurons;i++)
+    {
+      /* Copy error to solo predecessor */
+      l->neurons[i]->prevs[0]->error = l->neurons[i]->error;
+    }
+  
+  return EXIT_SUCCESS;
+}
+
