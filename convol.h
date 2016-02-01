@@ -24,7 +24,7 @@ typedef struct CONVOL
 } CONVOL;
 
 
-CONVOL* convol_create(ACTIVATION, unsigned int, unsigned int, unsigned int, unsigned int, Neuron**);
+CONVOL* convol_create(ACTIVATION, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, Neuron** in[]);
 int convol_delete(CONVOL*);
 int convol_feedforward(CONVOL*);
 int convol_backpropagation(CONVOL*);

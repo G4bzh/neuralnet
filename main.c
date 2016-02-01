@@ -60,7 +60,7 @@ int main( int argc, char* argv[])
 
 
   input = input_create(DS->in_len);
-  cv = convol_create(ACT_SIGMOID,28,28,5,5,input->neurons);
+  cv = convol_create(ACT_SIGMOID,28,28,5,5,1,&input->neurons);
   mp = maxpool_create(24,24,2,2,cv->neurons);
   hidden = fullconn_create(100,ACT_SIGMOID,mp->n_neurons,mp->neurons);
   output = fullconn_create(10,ACT_SIGMOID,hidden->n_neurons,hidden->neurons);

@@ -17,17 +17,18 @@
 
 */
 
-CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsigned int cv_w, unsigned int cv_h, Neuron** in)
+CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsigned int cv_w, unsigned int cv_h, unsigned int depth, Neuron** in[])
 {
   assert(in_w);
   assert(in_h);
   assert(cv_w);
   assert(cv_h);
+  assert(depth);
   assert(in != NULL);
 
   CONVOL* cv;
   Neuron** p;
-  unsigned int i,j,n,col,row,x,y;
+  unsigned int d,i,j,n,col,row,x,y;
 
   cv = (CONVOL*)malloc(sizeof(CONVOL));
   if (cv == NULL)
@@ -36,7 +37,7 @@ CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsi
     }
 
   /* Shared weights (+ bias) */
-  cv->weights = (double*)malloc((cv_w*cv_h+1)*sizeof(double));
+  cv->weights = (double*)malloc((depth*cv_w*cv_h+1)*sizeof(double));
   if (cv->weights == NULL)
     {
       goto err1;
@@ -47,7 +48,7 @@ CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsi
       cv->weights[i] = ((double)(rand()-RAND_MAX/2)/(double)RAND_MAX);
     }
   cv->weights[i] = 1.0; /* Bias */
-  cv->n_weights = cv_w*cv_h;
+  cv->n_weights = depth*cv_w*cv_h;
 
   /* Convolution matrix */
   cv->cv_w = cv_w;
@@ -65,32 +66,36 @@ CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsi
 
   /* Convolutional Helper */
   i=0;
-  p = (Neuron**)malloc(cv_h*cv_w*sizeof(Neuron*));
+  p = (Neuron**)malloc(depth*cv_h*cv_w*sizeof(Neuron*));
   if (p == NULL)
     {
       goto err3;
     }
   
   /* Convolutions */
+ 
   for(i=0;i<n;i++)
-    {
-      col = i % (in_w - cv_w + 1);
-      row = i / (in_w - cv_w + 1);
-      
-      
-      /* Convolutional predecessors */
-      for(y=row;y<row+cv_h;y++)
+    for(d=0;d<depth;d++)
+      {
 	{
-	  for(x=col;x<col+cv_w;x++)
+	  col = i % (in_w - cv_w + 1);
+	  row = i / (in_w - cv_w + 1);
+	  
+	  
+	  /* Convolutional predecessors */
+	  for(y=row;y<row+cv_h;y++)
 	    {
-	      p[(x-col)+(y-row)*cv_w] = in[x+y*in_w];
+	      for(x=col;x<col+cv_w;x++)
+		{
+		  p[((x-col)+(y-row)*cv_w)+(d*cv_w*cv_h)] = in[d][x+y*in_w];
+		}
 	    }
-	}
-
-      cv->neurons[i] = neuron_create(cv->n_weights,act,cv->weights,p);
-      if (cv->neurons[i] == NULL)
-	{
-	  goto err4;
+	  
+	  cv->neurons[i] = neuron_create(cv->n_weights,act,cv->weights,p);
+	  if (cv->neurons[i] == NULL)
+	    {
+	      goto err4;
+	    }
 	}
     }
 
