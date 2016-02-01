@@ -15,6 +15,7 @@
 #include "fullconn.h"
 #include "convol.h"
 #include "maxpool.h"
+#include "linear.h"
 #include "mnist.h"
 
 
