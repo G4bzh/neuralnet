@@ -35,7 +35,7 @@ int main( int argc, char* argv[])
 
 
   srand(time(NULL));
-  epoch = 30;
+  epoch = 60;
   eta = 0.1;
   lambda = 5.0;
   batch_size = 10;

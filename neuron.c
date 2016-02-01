@@ -95,11 +95,13 @@ Neuron* neuron_create(unsigned int n, ACTIVATION act, double* a, Neuron** p)
       {
 	N->activation = func_tanh;
 	N->activation_prime = func_tanh_prime;
+	break;
       }
     case ACT_IDENTITY:
       {
 	N->activation = func_identity;
 	N->activation_prime = func_identity_prime;
+	break;
       }
     case ACT_SIGMOID:
     default:
