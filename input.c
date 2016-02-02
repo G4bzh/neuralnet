@@ -50,7 +50,6 @@ INPUT* input_create(unsigned int i)
   return in;
 
  err2:
-  #pragma omp parallel for
   for(k=0;k<j;k++)
     {
       neuron_delete(in->neurons[k]);
@@ -79,7 +78,6 @@ int input_delete(INPUT* in)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<in->n_neurons;i++)
     {
       neuron_delete(in->neurons[i]);

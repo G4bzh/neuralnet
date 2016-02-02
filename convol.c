@@ -75,8 +75,8 @@ CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsi
   /* Convolutions */
  
   for(i=0;i<n;i++)
-    for(d=0;d<depth;d++)
-      {
+    {
+      for(d=0;d<depth;d++)
 	{
 	  col = i % (in_w - cv_w + 1);
 	  row = i / (in_w - cv_w + 1);
@@ -90,13 +90,13 @@ CONVOL* convol_create(ACTIVATION act, unsigned int in_w, unsigned int in_h, unsi
 		  p[((x-col)+(y-row)*cv_w)+(d*cv_w*cv_h)] = in[d][x+y*in_w];
 		}
 	    }
-	  
-	  cv->neurons[i] = neuron_create(cv->n_weights,act,cv->weights,p);
-	  if (cv->neurons[i] == NULL)
-	    {
-	      goto err4;
-	    }
-	}
+	}  
+	 
+      cv->neurons[i] = neuron_create(cv->n_weights,act,cv->weights,p);
+      if (cv->neurons[i] == NULL)
+	{
+	  goto err4;
+	} 
     }
 
   free(p);
@@ -200,7 +200,6 @@ int convol_backpropagation(CONVOL* cv)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<cv->n_neurons;i++)
     {
       neuron_backpropagation(cv->neurons[i],NULL);
@@ -226,24 +225,29 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
       return EXIT_FAILURE;
     }
 
+  /* Merge weights */
   #pragma omp parallel for
-  for(i=0;i<cv->n_neurons;i++)
-    {
-      neuron_update(cv->neurons[i],l,r,reg);
-    }
-
-  /* Merge weights and bias */
-  for(i=0;i<cv->n_weights+1;i++)
+  for(i=0;i<cv->n_weights;i++)
     {
       sum = 0;
       for(j=0;j<cv->n_neurons;j++)
 	{
-	  sum += cv->neurons[j]->weights[i] - cv->weights[i];
+	  sum += cv->neurons[j]->acc_grad_w[i];
 	}
-      cv->weights[i] -= sum;
+      cv->weights[i] -= (sum/cv->n_weights)*l + reg(r,cv->weights[i]);
     }
 
+  /* Merge biases */
+  sum = 0;
+  for(j=0;j<cv->n_neurons;j++)
+    {
+      sum += cv->neurons[j]->acc_grad_b;
+    }
+  cv->weights[i] -= (sum/cv->n_weights)*l;
+
+
   /* Reset neurons shared weights and biases */
+  #pragma omp parallel for
   for(j=0;j<cv->n_neurons;j++)
     {
       for(i=0;i<cv->n_weights+1;i++)
