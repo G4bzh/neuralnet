@@ -146,8 +146,7 @@ int maxpool_feedforward(MAXPOOL* mp)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
-  for(i=0;i<mp->n_neurons;i++)
+   for(i=0;i<mp->n_neurons;i++)
     {
       neuron_maxprev(mp->neurons[i]);
     }
@@ -172,7 +171,6 @@ int maxpool_backpropagation(MAXPOOL* mp)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<mp->n_neurons;i++)
     {
       /* Copy error to max predecessor */

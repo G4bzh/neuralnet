@@ -103,7 +103,6 @@ int input_feedforward(INPUT* in, double* a)
 
   unsigned int i;
 
-  #pragma omp parallel for
   for(i=0;i<in->n_neurons;i++)
     {
       in->neurons[i]->output = a[i];

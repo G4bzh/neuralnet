@@ -112,7 +112,6 @@ int fullconn_feedforward(FULLCONN* FC)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<FC->n_neurons;i++)
     {
       neuron_feedforward(FC->neurons[i]);
@@ -179,7 +178,6 @@ int fullconn_update(FULLCONN* FC, double l, double r, double (*reg)(double,doubl
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<FC->n_neurons;i++)
     {
       neuron_update(FC->neurons[i],l,r,reg);

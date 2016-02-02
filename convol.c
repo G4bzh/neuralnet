@@ -175,7 +175,6 @@ int convol_feedforward(CONVOL* cv)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<cv->n_neurons;i++)
     {
       neuron_feedforward(cv->neurons[i]);
@@ -226,7 +225,6 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
     }
 
   /* Merge weights */
-  #pragma omp parallel for
   for(i=0;i<cv->n_weights;i++)
     {
       sum = 0;
@@ -234,7 +232,7 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
 	{
 	  sum += cv->neurons[j]->acc_grad_w[i];
 	}
-      cv->weights[i] -= (sum/cv->n_weights)*l + reg(r,cv->weights[i]);
+      cv->weights[i] -= (sum/cv->n_weights)*l  + reg(r,cv->weights[i]);
     }
 
   /* Merge biases */
@@ -247,7 +245,6 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
 
 
   /* Reset neurons shared weights and biases */
-  #pragma omp parallel for
   for(j=0;j<cv->n_neurons;j++)
     {
       for(i=0;i<cv->n_weights+1;i++)

@@ -96,7 +96,7 @@ int linear_delete(LINEAR* l)
 
 /*
 
-  Feeforward
+  Feedforward
 
 */
 
@@ -110,7 +110,6 @@ int linear_feedforward(LINEAR* l)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<l->n_neurons;i++)
     {
       l->neurons[i]->output =  l->neurons[i]->prevs[0]->output;
@@ -136,7 +135,6 @@ int linear_backpropagation(LINEAR* l)
       return EXIT_FAILURE;
     }
 
-  #pragma omp parallel for
   for(i=0;i<l->n_neurons;i++)
     {
       /* Copy error to solo predecessor */
