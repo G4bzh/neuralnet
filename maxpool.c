@@ -174,7 +174,8 @@ int maxpool_backpropagation(MAXPOOL* mp)
   for(i=0;i<mp->n_neurons;i++)
     {
       /* Copy error to max predecessor */
-      mp->neurons[i]->prevs[(unsigned int)(mp->neurons[i]->weights[0])]->error = mp->neurons[i]->error;
+      mp->neurons[i]->prevs[(unsigned int)(mp->neurons[i]->weights[0])]->error += mp->neurons[i]->error;
+      mp->neurons[i]->error = 0;
     }
   
   return EXIT_SUCCESS;

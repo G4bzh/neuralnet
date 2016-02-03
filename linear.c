@@ -138,8 +138,10 @@ int linear_backpropagation(LINEAR* l)
   for(i=0;i<l->n_neurons;i++)
     {
       /* Copy error to solo predecessor */
-      l->neurons[i]->prevs[0]->error = l->neurons[i]->error;
+      l->neurons[i]->prevs[0]->error += l->neurons[i]->error;
+      l->neurons[i]->error = 0;
     }
+  
   
   return EXIT_SUCCESS;
 }
