@@ -28,7 +28,10 @@ int main( int argc, char* argv[])
   double eta, lambda;
   CONVOL* cv[20];
   MAXPOOL* mp[20];
+  CONVOL* cv_[40];
+  MAXPOOL* mp_[40];
   Neuron** a[20];
+  Neuron** a_[20];
   LINEAR* l;
   FULLCONN* hidden;
   FULLCONN* output;
@@ -73,7 +76,17 @@ int main( int argc, char* argv[])
       a[u] = mp[u]->neurons;
     }
 
-  l = linear_create(20,144,a);
+  for(u=0;u<40;u++)
+    {
+      cv_[u] = convol_create(ACT_SIGMOID,12,12,5,5,20,a);
+    }
+  for(u=0;u<40;u++)
+    {
+      mp_[u] = maxpool_create(8,8,2,2,cv_[u]->neurons);
+      a_[u] = mp_[u]->neurons;
+    }
+
+  l = linear_create(40,16,a_);
   hidden = fullconn_create(100,ACT_SIGMOID,l->n_neurons,l->neurons);
   output = fullconn_create(10,ACT_SIGMOID,hidden->n_neurons,hidden->neurons);
 
@@ -93,6 +106,11 @@ int main( int argc, char* argv[])
 		  convol_feedforward(cv[u]);
 		  maxpool_feedforward(mp[u]);
 		}
+	      for(u=0;u<40;u++)
+		{
+		  convol_feedforward(cv_[u]);
+		  maxpool_feedforward(mp_[u]);
+		}
 	      linear_feedforward(l);
 	      fullconn_feedforward(hidden);
 	      fullconn_feedforward(output);
@@ -100,6 +118,11 @@ int main( int argc, char* argv[])
 	      fullconn_backpropagation(output,DS->out[i],func_crossentropy);
 	      fullconn_backpropagation(hidden,NULL,NULL);
 	      linear_backpropagation(l);
+	      for(u=0;u<40;u++)
+		{
+		  maxpool_backpropagation(mp_[u]);
+		  convol_backpropagation(cv_[u]);
+		}
 	      for(u=0;u<20;u++)
 		{
 		  maxpool_backpropagation(mp[u]);
@@ -111,6 +134,10 @@ int main( int argc, char* argv[])
 	  for(u=0;u<20;u++)
 	    {
 	      convol_update(cv[u],eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
+	    }
+	  for(u=0;u<40;u++)
+	    {
+	      convol_update(cv_[u],eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
 	    }
 	  fullconn_update(hidden,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
 	  fullconn_update(output,eta/(double)batch_size,eta*lambda/(double)DS->len,func_regL2);
@@ -127,6 +154,11 @@ int main( int argc, char* argv[])
 	    {
 	      convol_feedforward(cv[u]);
 	      maxpool_feedforward(mp[u]);
+	    }
+	  for(u=0;u<40;u++)
+	    {
+	      convol_feedforward(cv_[u]);
+	      maxpool_feedforward(mp_[u]);
 	    }
 	  linear_feedforward(l);
 	  fullconn_feedforward(hidden);
@@ -154,6 +186,11 @@ int main( int argc, char* argv[])
     }
 
   fullconn_delete(output);
+  for(u=0;u<40;u++)
+    {
+      maxpool_delete(mp_[u]);
+      convol_delete(cv_[u]);
+    }
   for(u=0;u<20;u++)
     {
       maxpool_delete(mp[u]);
