@@ -17,6 +17,8 @@ inline double func_tanh(double);
 inline double func_tanh_prime(double);
 inline double func_identity(double);
 inline double func_identity_prime(double);
+inline double func_relu(double);
+inline double func_relu_prime(double);
 inline double func_quadratic(Neuron*, double);
 inline double func_crossentropy(Neuron*, double);
 inline double func_regNone(double, double);

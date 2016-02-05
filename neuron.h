@@ -15,6 +15,7 @@ typedef enum ACTIVATION
     ACT_SIGMOID,
     ACT_TANH,
     ACT_IDENTITY,
+    ACT_RELU,
   } ACTIVATION;
 
 

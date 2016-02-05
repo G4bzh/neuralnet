@@ -82,6 +82,31 @@ inline double func_identity_prime(double x)
   return 1.0;
 }
 
+/*
+
+  RELU
+
+*/
+
+
+inline double func_relu(double x)
+{
+  return (x<0?0.0:x);
+}
+
+
+/*
+
+  RELU Prime
+
+*/
+
+inline double func_relu_prime(double x)
+{
+   return (x<0?0.0:1.0);
+}
+
+
 
 /*
 
