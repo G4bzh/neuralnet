@@ -88,7 +88,7 @@ int main( int argc, char* argv[])
 
   l = linear_create(40,16,a_);
   hidden = fullconn_create(100,ACT_SIGMOID,l->n_neurons,l->neurons);
-  output = fullconn_create(10,ACT_RELU,hidden->n_neurons,hidden->neurons);
+  output = fullconn_create(10,ACT_SIGMOID,hidden->n_neurons,hidden->neurons);
 
   for(run=0;run<epoch;run++)
     {
