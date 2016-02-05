@@ -241,7 +241,7 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
     {
       sum += cv->neurons[j]->acc_grad_b;
     }
-  cv->weights[i] -= (sum/cv->n_weights)*l;
+  cv->weights[cv->n_weights] -= (sum/cv->n_weights)*l;
 
 
   /* Reset neurons shared weights and biases */
