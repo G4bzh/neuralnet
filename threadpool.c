@@ -181,6 +181,11 @@ TASK* tqueue_pop(TQUEUE* q)
 
   t = q->head;
   q->head = q->head->prev;
+  /* Update tail if no more task */
+  if (q->head == NULL)
+    {
+      q->tail = NULL;
+    }
 
   pthread_mutex_unlock( &(q->mutex) );
  
@@ -253,9 +258,9 @@ THPOOL* thpool_create(unsigned int n_threads)
   for(i=0;i<n_threads;i++)
     {
       if ( pthread_create(&(tp->threads[i]),NULL,thpool_exec,(void*)tp) != 0 )
-	{
-	  goto err2;
-	}
+      	{
+      	  goto err2;
+      	}
     }
 
   tp->n_threads = n_threads;
@@ -350,7 +355,7 @@ void func(void* i)
 int main()
 {
   THPOOL* pool;
-
+ 
   pool = thpool_create(4);
   thpool_run(pool,func,(void*)0);
   thpool_run(pool,func,(void*)1);
