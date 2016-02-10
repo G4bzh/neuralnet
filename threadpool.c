@@ -119,11 +119,95 @@ int tqueue_delete(TQUEUE* tq)
 
 /*
 
+  TQueue : Push
+
+*/
+
+int tqueue_push(TQUEUE* q, TASK* t)
+{
+  if (t == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  /* Critical section */
+  pthread_mutex_lock( &(q->mutex) );
+  
+  if (q->tail == NULL)
+    {
+      q->head = t;
+      q->tail = t;
+    }
+  else
+    {
+      q->tail->prev = t;
+      q->tail = t;
+    }
+
+  /* Work todo now */
+  pthread_cond_signal( &(q->todo) );
+
+  pthread_mutex_unlock( &(q->mutex) );
+
+
+  return EXIT_SUCCESS;
+}
+
+
+/*
+
+  TQueue : Pop
+
+*/
+
+
+
+
+/*
+
+  Dummy
+
+*/
+
+
+void func(void* i)
+{
+  
+  printf("I'm %d\n", (int)i);
+  return;
+}
+
+
+/*
+
   Main
 
 */
 
 int main()
 {
+  TQUEUE* q;
+  TASK *t0,*t1,*t2,*t;
+
+  t0 = task_create(func,(void*)0);
+  t1 = task_create(func,(void*)1);
+  t2 = task_create(func,(void*)2);
+
+  q = tqueue_create();
+
+  tqueue_push(q,t0);
+  tqueue_push(q,t1);
+  tqueue_push(q,t2);
+  
+  for(t=q->head;t!=NULL;t=t->prev)
+    {
+      t->function(t->arg);
+    }
+
+  task_delete(t0);
+  task_delete(t1);
+  task_delete(t2);
+  tqueue_delete(q);
+
   return 0;
 }
