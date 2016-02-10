@@ -1,13 +1,13 @@
 CC = gcc
-CFLAGS = -Wall -lm -g
+CFLAGS = -Wall -lm -g -lpthread
 EXEC = neuralnet
 
 all : $(EXEC)
 
-neuralnet: main.o neuron.o dataset.o mnist.o input.o fullconn.o functions.o convol.o maxpool.o linear.o
+neuralnet: main.o neuron.o dataset.o mnist.o input.o fullconn.o functions.o convol.o maxpool.o linear.o threadpool.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-main.o: main.c neuron.h dataset.h mnist.h input.h fullconn.h functions.h convol.h maxpool.h linear.h
+main.o: main.c neuron.h dataset.h mnist.h input.h fullconn.h functions.h convol.h maxpool.h linear.h threadpool.h
 
 mnist.o : mnist.c mnist.h dataset.h
 
@@ -28,7 +28,7 @@ neuron.o: neuron.c neuron.h
 dataset.o: dataset.c dataset.h
 
 threadpool: threadpool.c threadpool.h
-	$(CC) $(CFLAGS) -lpthread -o $@ threadpool.c
+
 
 clean:
 	rm -f *.o

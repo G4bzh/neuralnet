@@ -17,6 +17,7 @@
 #include "maxpool.h"
 #include "linear.h"
 #include "mnist.h"
+#include "threadpool.h"
 
 
 int main( int argc, char* argv[])
