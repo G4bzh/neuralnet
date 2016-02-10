@@ -27,6 +27,9 @@ neuron.o: neuron.c neuron.h
 
 dataset.o: dataset.c dataset.h
 
+threadpool: threadpool.c threadpool.h
+	$(CC) $(CFLAGS) -lpthread -o $@ threadpool.c
+
 clean:
 	rm -f *.o
 	rm -f *~
