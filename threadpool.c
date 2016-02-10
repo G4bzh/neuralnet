@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <pthread.h>
+#include <unistd.h>
 #include "threadpool.h"
 
 
@@ -132,7 +133,7 @@ int tqueue_push(TQUEUE* q, TASK* t)
 
   /* Critical section */
   pthread_mutex_lock( &(q->mutex) );
-  
+
   if (q->tail == NULL)
     {
       q->head = t;
@@ -182,7 +183,7 @@ TASK* tqueue_pop(TQUEUE* q)
   q->head = q->head->prev;
 
   pthread_mutex_unlock( &(q->mutex) );
-  
+ 
   return t;
   
 }
@@ -335,7 +336,7 @@ void func(void* i)
 {
   
   printf("I'm %d\n", (int)i);
- 
+
   return;
 }
 
@@ -355,9 +356,7 @@ int main()
   thpool_run(pool,func,(void*)1);
   thpool_run(pool,func,(void*)2);
 
-  for(;;)
-    {
-    }
+  sleep(100);
  
   thpool_delete(pool);
 
