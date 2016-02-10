@@ -125,7 +125,7 @@ int tqueue_delete(TQUEUE* tq)
 
 int tqueue_push(TQUEUE* q, TASK* t)
 {
-  if (t == NULL)
+  if ( (t == NULL) || (q == NULL) )
     {
       return EXIT_FAILURE;
     }
@@ -160,6 +160,33 @@ int tqueue_push(TQUEUE* q, TASK* t)
 
 */
 
+
+TASK* tqueue_pop(TQUEUE* q)
+{
+  TASK* t;
+
+  if (q == NULL)
+    {
+      return NULL;
+    }
+
+  /* Critical section */
+  pthread_mutex_lock( &(q->mutex) );
+
+  /* Wait for a task to do */
+  while( q->head == NULL )
+    {
+      pthread_cond_wait( &(q->todo), &(q->mutex) );
+    }
+
+  t = q->head;
+  q->head = q->head->prev;
+
+  pthread_mutex_unlock( &(q->mutex) );
+
+  return t;
+
+}
 
 
 
@@ -199,7 +226,7 @@ int main()
   tqueue_push(q,t1);
   tqueue_push(q,t2);
   
-  for(t=q->head;t!=NULL;t=t->prev)
+  for(t=tqueue_pop(q);t!=NULL;t=tqueue_pop(q))
     {
       t->function(t->arg);
     }
