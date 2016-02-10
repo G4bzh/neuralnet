@@ -36,5 +36,8 @@ typedef struct THPOOL
 } THPOOL;
 
 
+THPOOL* thpool_create(unsigned int n_threads);
+int thpool_delete(THPOOL*);
+int thpool_run(THPOOL*, void (*function)(void*), void*);
 
 #endif

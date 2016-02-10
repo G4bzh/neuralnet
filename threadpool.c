@@ -149,7 +149,6 @@ int tqueue_push(TQUEUE* q, TASK* t)
 
   pthread_mutex_unlock( &(q->mutex) );
 
-
   return EXIT_SUCCESS;
 }
 
@@ -183,11 +182,146 @@ TASK* tqueue_pop(TQUEUE* q)
   q->head = q->head->prev;
 
   pthread_mutex_unlock( &(q->mutex) );
-
+  
   return t;
+  
+}
+
+
+/*
+
+  THPool : Exec
+
+*/
+
+void* thpool_exec(void* arg)
+{
+  THPOOL* tp = (THPOOL*)arg;
+  TASK* t;
+
+  if (tp == NULL)
+    {
+      return NULL;
+    }
+
+  while( (t = tqueue_pop(tp->queue)) != NULL )
+    {
+      t->function(t->arg);
+      task_delete(t);
+    }
+
+  return NULL;
+}
+
+
+/*
+
+  THPool : Creation
+
+*/
+
+THPOOL* thpool_create(unsigned int n_threads)
+{
+  THPOOL* tp;
+  unsigned int i;
+
+  if (n_threads == 0)
+    {
+      return NULL;
+    }
+
+  tp = (THPOOL*)malloc(sizeof(THPOOL));
+  if (tp == NULL)
+    {
+      return NULL;
+    }
+
+  tp->threads = (pthread_t*)malloc(n_threads*sizeof(pthread_t));
+  if (tp == NULL)
+    {
+      goto err0;
+    }
+
+  tp->queue = tqueue_create();
+  if (tp->queue == NULL)
+    {
+      goto err1;
+    }
+
+
+  for(i=0;i<n_threads;i++)
+    {
+      if ( pthread_create(&(tp->threads[i]),NULL,thpool_exec,(void*)tp) != 0 )
+	{
+	  goto err2;
+	}
+    }
+
+  tp->n_threads = n_threads;
+
+  return tp;
+
+ err2:
+  tqueue_delete(tp->queue);    
+
+ err1:
+  free(tp->threads);
+
+ err0:
+  free(tp);
+
+  return NULL;
 
 }
 
+
+/*
+
+  THPool : Delete
+
+*/
+
+int thpool_delete(THPOOL* tp)
+{
+  if (tp == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  tqueue_delete(tp->queue);    
+  free(tp->threads);
+  free(tp);
+
+  return EXIT_SUCCESS;
+}
+
+
+
+
+/*
+
+  THPool: Run
+
+*/
+
+int thpool_run(THPOOL* tp, void (*function)(void*), void* arg)
+{
+  TASK* t;
+
+  if ( (tp == NULL) || (function == NULL) )
+    {
+      return EXIT_FAILURE;
+    }
+
+  t = task_create(function,arg);
+  if (t == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  return tqueue_push(tp->queue,t);
+   
+}
 
 
 /*
@@ -201,6 +335,7 @@ void func(void* i)
 {
   
   printf("I'm %d\n", (int)i);
+ 
   return;
 }
 
@@ -213,28 +348,18 @@ void func(void* i)
 
 int main()
 {
-  TQUEUE* q;
-  TASK *t0,*t1,*t2,*t;
+  THPOOL* pool;
 
-  t0 = task_create(func,(void*)0);
-  t1 = task_create(func,(void*)1);
-  t2 = task_create(func,(void*)2);
+  pool = thpool_create(4);
+  thpool_run(pool,func,(void*)0);
+  thpool_run(pool,func,(void*)1);
+  thpool_run(pool,func,(void*)2);
 
-  q = tqueue_create();
-
-  tqueue_push(q,t0);
-  tqueue_push(q,t1);
-  tqueue_push(q,t2);
-  
-  for(t=tqueue_pop(q);t!=NULL;t=tqueue_pop(q))
+  for(;;)
     {
-      t->function(t->arg);
     }
-
-  task_delete(t0);
-  task_delete(t1);
-  task_delete(t2);
-  tqueue_delete(q);
+ 
+  thpool_delete(pool);
 
   return 0;
 }
