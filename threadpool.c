@@ -212,8 +212,22 @@ void* thpool_exec(void* arg)
 
   while( (t = tqueue_pop(tp->queue)) != NULL )
     {
+
+      pthread_mutex_lock( &(tp->mutex) );
+      tp->n_working++;
+      pthread_mutex_unlock( &(tp->mutex) );
+
       t->function(t->arg);
       task_delete(t);
+
+      pthread_mutex_lock( &(tp->mutex) );
+      tp->n_working--;
+      if (!tp->n_working)
+	{
+	  pthread_cond_signal( &(tp->idle) );
+	}
+      pthread_mutex_unlock( &(tp->mutex) );
+
     }
 
   return NULL;
@@ -263,7 +277,11 @@ THPOOL* thpool_create(unsigned int n_threads)
       	}
     }
 
+  pthread_mutex_init(&(tp->mutex),NULL);
+  pthread_cond_init(&(tp->idle),NULL);
+
   tp->n_threads = n_threads;
+  tp->n_working = 0;
 
   return tp;
 
@@ -290,6 +308,11 @@ THPOOL* thpool_create(unsigned int n_threads)
 int thpool_delete(THPOOL* tp)
 {
   if (tp == NULL)
+    {
+      return EXIT_FAILURE;
+    }
+
+  if ( thpool_wait(tp) != EXIT_SUCCESS )
     {
       return EXIT_FAILURE;
     }
@@ -327,4 +350,32 @@ int thpool_run(THPOOL* tp, void (*function)(void*), void* arg)
 
   return tqueue_push(tp->queue,t);
    
+}
+
+
+/*
+
+  THPool : Wait
+
+*/
+
+int thpool_wait(THPOOL* tp)
+{
+  if ( tp == NULL )
+    {
+      return EXIT_FAILURE;
+    }
+
+  pthread_mutex_lock( &(tp->mutex) );
+
+  /* Wait for idleness  */
+  while( tp->n_working )
+    {
+      pthread_cond_wait( &(tp->idle), &(tp->mutex) );
+    }
+
+  pthread_mutex_unlock( &(tp->mutex) );
+
+  return EXIT_SUCCESS;
+
 }
