@@ -36,18 +36,9 @@ Neuron* neuron_create(unsigned int n, ACTIVATION act, double* a, Neuron** p)
     {
       assert(p != NULL);
 
-      /* (n+1) in malloc : bias */
-      N->weights = (double*)malloc((n+1)*sizeof(double));
-      if (N->weights == NULL)
-	{
-	  free(N);
-	  return NULL;
-	}
-
       N->prevs = (Neuron**)malloc(n*sizeof(Neuron*));
       if (N->prevs == NULL)
 	{
-	  free(N->weights);
 	  free(N);
 	  return NULL;
 	}
@@ -61,7 +52,6 @@ Neuron* neuron_create(unsigned int n, ACTIVATION act, double* a, Neuron** p)
       if (N->acc_grad_w == NULL)
 	{
 	  free(N->prevs);
-	  free(N->weights);
 	  free(N);
 	  return NULL;
 	}
@@ -69,23 +59,35 @@ Neuron* neuron_create(unsigned int n, ACTIVATION act, double* a, Neuron** p)
      
       if (a == NULL)
 	{
+	  /* (n+1) in malloc : bias */
+	  N->weights = (double*)malloc((n+1)*sizeof(double));
+	  if (N->weights == NULL)
+	    {
+	      free(N->acc_grad_w);
+	      free(N->prevs);
+	      free(N);
+	      return NULL;
+	    }
+
 	  for(i=0;i<n;i++)
 	    {
 	      N->weights[i] = ((double)(rand()-RAND_MAX/2)/(double)RAND_MAX);
 	      N->acc_grad_w[i] = 0.0;
 	    }
+
+	  /* Bias */
+	  N->weights[n] = 1.0;
 	}
       else
 	{
-	  for(i=0;i<n;i++)
-	    {
-	      N->weights[i] = a[i];
-	      N->acc_grad_w[i] = 0.0;
-	    }
+	  /* for(i=0;i<n;i++) */
+	  /*   { */
+	  /*     N->weights[i] = a[i]; */
+	  /*     N->acc_grad_w[i] = 0.0; */
+	  /*   } */
+	  N->weights = a;
+	  
 	}
-      
-      /* Bias */
-      N->weights[n] = 1.0;
       
     }
  
@@ -144,7 +146,10 @@ int neuron_delete(Neuron* N)
 
   if (N->n_in)
     {
-      free(N->weights);
+      if (N->weights != NULL)
+	{
+	  free(N->weights);
+	}
       free(N->prevs);
       free(N->acc_grad_w);
     }

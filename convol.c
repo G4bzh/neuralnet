@@ -148,6 +148,7 @@ int convol_delete(CONVOL* cv)
   
   for(i=0;i<cv->n_neurons;i++)
     {
+      cv->neurons[i]->weights = NULL;
       neuron_delete(cv->neurons[i]);
     }
   
@@ -227,32 +228,32 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
   /* Merge weights */
   for(i=0;i<cv->n_weights;i++)
     {
-      sum = 0;
+      //sum = 0;
       for(j=0;j<cv->n_neurons;j++)
 	{
-	  sum += cv->neurons[j]->acc_grad_w[i];
+	  neuron_update(cv->neurons[j],l,r,reg);
+	  
+	  //sum += cv->neurons[j]->acc_grad_w[i];
+	  //cv->neurons[j]->acc_grad_w[i] = 0;
 	}
-      cv->weights[i] -= (sum/cv->n_weights)*l  + reg(r,cv->weights[i]);
+      //cv->weights[i] -= (sum/cv->n_weights)*l  + reg(r,cv->weights[i]);
     }
+
+  return EXIT_SUCCESS;
+
+
+
+
+
 
   /* Merge biases */
   sum = 0;
   for(j=0;j<cv->n_neurons;j++)
     {
       sum += cv->neurons[j]->acc_grad_b;
+      //cv->neurons[j]->acc_grad_b = 0;
     }
   cv->weights[cv->n_weights] -= (sum/cv->n_weights)*l;
-
-
-  /* Reset neurons shared weights and biases */
-  for(j=0;j<cv->n_neurons;j++)
-    {
-      for(i=0;i<cv->n_weights+1;i++)
-	{
-	  
-	  cv->neurons[j]->weights[i] = cv->weights[i] ;
-	}
-    }
 
   return EXIT_SUCCESS;
 }
