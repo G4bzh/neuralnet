@@ -242,11 +242,17 @@ inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,dou
   for(i=0;i<N->n_in;i++)
     {
       N->weights[i] -= N->acc_grad_w[i]*l + reg(r,N->weights[i]);
-      N->acc_grad_w[i] = 0;
+      if (r)
+	{
+	  N->acc_grad_w[i] = 0;
+	}
     }
   N->weights[i] -= N->acc_grad_b * l;
-  N->acc_grad_b = 0;
-  
+  if (r)
+    {  
+      N->acc_grad_b = 0;
+    }
+
   return EXIT_SUCCESS;
 }
 
