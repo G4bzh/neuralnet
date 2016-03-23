@@ -39,7 +39,7 @@ Neuron* neuron_create(unsigned int, ACTIVATION, double*, Neuron**);
 int neuron_delete(Neuron*);
 inline int neuron_feedforward(Neuron*);
 inline int neuron_backpropagation(Neuron*, double*);
-inline int neuron_update(Neuron*, double, double, double (*reg)(double,double));
+inline int neuron_update(Neuron*, double, double, double (*reg)(double,double), unsigned int);
 inline int neuron_maxprev(Neuron*);
 
 #endif

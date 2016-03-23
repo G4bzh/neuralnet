@@ -180,7 +180,7 @@ int fullconn_update(FULLCONN* FC, double l, double r, double (*reg)(double,doubl
 
   for(i=0;i<FC->n_neurons;i++)
     {
-      neuron_update(FC->neurons[i],l,r,reg);
+      neuron_update(FC->neurons[i],l,r,reg,1);
     }
 
   return EXIT_SUCCESS;

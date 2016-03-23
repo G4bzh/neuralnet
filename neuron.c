@@ -232,7 +232,7 @@ inline int neuron_backpropagation(Neuron* N, double* e)
 
 */
 
-inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,double))
+inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,double), unsigned int reinit)
 {
   assert( N != NULL );
   assert( N->n_in );
@@ -242,13 +242,13 @@ inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,dou
   for(i=0;i<N->n_in;i++)
     {
       N->weights[i] -= N->acc_grad_w[i]*l + reg(r,N->weights[i]);
-      if (r)
+      if (reinit)
 	{
 	  N->acc_grad_w[i] = 0;
 	}
     }
   N->weights[i] -= N->acc_grad_b * l;
-  if (r)
+  if (reinit)
     {  
       N->acc_grad_b = 0;
     }

@@ -225,6 +225,7 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
       return EXIT_FAILURE;
     }
 
+  /* Regularization */
   for(i=0;i<cv->n_weights;i++)
     {
       cv->weights[i] += reg(r, cv->weights[i]);
@@ -233,7 +234,7 @@ int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
   /* Update weights */
   for(i=0;i<cv->n_neurons;i++)
     {
-      neuron_update(cv->neurons[i],l/cv->n_neurons,0,func_regNone);
+      neuron_update(cv->neurons[i],l/cv->n_neurons,0,func_regNone,0);
     }
 
 
