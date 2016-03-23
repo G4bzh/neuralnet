@@ -80,11 +80,11 @@ Neuron* neuron_create(unsigned int n, ACTIVATION act, double* a, Neuron** p)
 	}
       else
 	{
-	  /* for(i=0;i<n;i++) */
-	  /*   { */
-	  /*     N->weights[i] = a[i]; */
-	  /*     N->acc_grad_w[i] = 0.0; */
-	  /*   } */
+	  for(i=0;i<n;i++)
+	    {
+	      N->acc_grad_w[i] = 0.0;
+	    }
+
 	  N->weights = a;
 	  
 	}
@@ -246,7 +246,6 @@ inline int neuron_update(Neuron* N, double l, double r, double (*reg)(double,dou
     }
   N->weights[i] -= N->acc_grad_b * l;
   N->acc_grad_b = 0;
-
   
   return EXIT_SUCCESS;
 }
