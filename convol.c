@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include "functions.h"
 #include "neuron.h"
 #include "convol.h"
 
@@ -217,43 +218,18 @@ int convol_backpropagation(CONVOL* cv)
 
 int convol_update(CONVOL* cv, double l, double r, double (*reg)(double,double))
 {
-  unsigned int i,j;
-  double sum;
+  unsigned int i;
 
   if ( (cv == NULL) || (reg == NULL) )
     {
       return EXIT_FAILURE;
     }
 
-  /* Merge weights */
-  for(i=0;i<cv->n_weights;i++)
+  /* Update weights */
+  for(i=0;i<cv->n_neurons;i++)
     {
-      //sum = 0;
-      for(j=0;j<cv->n_neurons;j++)
-	{
-	  neuron_update(cv->neurons[j],l,r,reg);
-	  
-	  //sum += cv->neurons[j]->acc_grad_w[i];
-	  //cv->neurons[j]->acc_grad_w[i] = 0;
-	}
-      //cv->weights[i] -= (sum/cv->n_weights)*l  + reg(r,cv->weights[i]);
+      neuron_update(cv->neurons[i],l/cv->n_weights,r/cv->n_weights,reg);
     }
-
-  return EXIT_SUCCESS;
-
-
-
-
-
-
-  /* Merge biases */
-  sum = 0;
-  for(j=0;j<cv->n_neurons;j++)
-    {
-      sum += cv->neurons[j]->acc_grad_b;
-      //cv->neurons[j]->acc_grad_b = 0;
-    }
-  cv->weights[cv->n_weights] -= (sum/cv->n_weights)*l;
-
+  
   return EXIT_SUCCESS;
 }
